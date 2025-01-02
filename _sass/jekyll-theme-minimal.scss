@@ -55,17 +55,20 @@ a:hover small {
   color:#777;
 }
 
-.tocblock {
+.toccontainer {
   
 }
 
-.mainblock {
+.maincontainer {
   display: flex;
 }
 
 .wrapper {
-  width:860px;
   margin:0 auto;
+}
+
+ul {
+  padding-inline-start: 10px;
 }
 
 blockquote {
