@@ -13,15 +13,15 @@
     {% include head-custom.html %}
   </head>
   <body>
-    <div class="tocblock">
-      {% include toc.html html=content %}
-    </div>
-    <div class="wrapper">
-      <section>
-
-      {{ content }}
-
-      </section>
+    <div class="mainblock">
+      <div class="tocblock">
+        {% include toc.html html=content %}
+      </div>
+      <div class="wrapper">
+        <section>
+          {{ content }}
+        </section>
+      </div>
     </div>
     <script src="{{ "/assets/js/scale.fix.js" | relative_url }}"></script>
   </body>
