@@ -1,7 +1,5 @@
 编译和链接
 
-[TOC]
-
 # 预编译头文件
 
 参考https://clang.llvm.org/docs/PCHInternals.html
