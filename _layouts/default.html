@@ -13,10 +13,11 @@
     {% include head-custom.html %}
   </head>
   <body>
+    <div class="tocblock">
+      {% include toc.html html=content %}
+    </div>
     <div class="wrapper">
       <section>
-
-      {% include toc.html html=content %}
 
       {{ content }}
 
