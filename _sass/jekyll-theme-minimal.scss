@@ -60,6 +60,7 @@ a:hover small {
   width: 20%;
   overflow-x: scroll;
   text-wrap: nowrap;
+  margin: 10px;
 }
 
 .maincontainer {
@@ -77,9 +78,11 @@ a:hover small {
   .toccontainer {
     width: unset;
   }
+  .maincontainer {
+    flex-direction: column;
+  }
   .wrapper {
     width: unset;
-    flex-direction: column;
   }
 }
 
