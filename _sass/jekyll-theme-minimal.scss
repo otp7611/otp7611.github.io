@@ -57,7 +57,7 @@ a:hover small {
 }
 
 .toccontainer {
-  width: 20%;
+  width: 15%;
   overflow-x: scroll;
   text-wrap: nowrap;
   margin: 10px;
@@ -71,7 +71,11 @@ a:hover small {
   margin:0 auto;
   overflow-y: scroll;
   height: 100vh;
-  width: 80%;
+  width: 85%;
+}
+
+session {
+  margin: 10px;
 }
 
 @media (max-width: 1023px) {
