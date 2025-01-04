@@ -83,6 +83,9 @@ a:hover small {
 }
 
 section {
+  padding: unset;
+}
+section {
   margin: 10px;
   padding: 0 10px;
 }
@@ -96,6 +99,10 @@ section {
   }
   .wrapper {
     width: unset;
+  }
+  section {
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
 }
 
