@@ -18,3 +18,7 @@ markdown编辑工具Typora
 
 [编译和链接](compileandlink.md)
 
+# ffmpeg工具的使用
+
+[ffmpeg工具的使用](/ffmpeg)
+
