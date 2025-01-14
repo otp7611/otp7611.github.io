@@ -54,35 +54,49 @@ ffmpeg -t 60 -i ~/share/keep/audioVideo.offset.mp4 -i http://d.lanrentuku.com/do
 
 # 直接播放PCM数据
 
+```shell
 ffplay -f f32le -ar 48k -ac 1 frame.flt5
+```
 
 # 查看流信息
 
+```shell
 ffprobe -show_frames 'a.m3u8' | grep pict_type
+```
 
 -of csv表示输出为csv格式
 
 # 从多个输入文件中选择流，合并成新文件
 
+```shell
 ffmpeg -i a.mp4 -i v.mp4 -map 0:0 -map 1:0 -c copy my.mp4
+```
 
 # 给视频添加pts时间显示
 
+```shell
 ffmpeg -y -i ~/share/keep/audioVideo.offset.mp4 -vf "drawtext=fontsize=36:fontcolor=yellow:text='%{pts\:hms}':x=20:y=20" audioVideo.timestamp.mp4
+```
 
 # 检测反相
 
+```shell
 ffmpeg -i invert.mp4 -af "aphasemeter=video=0:phasing=1:angle=150:duration=1:tolerance=0.001,ametadata=print:file=inwav-phase.txt" -vn -f null -
+```
 
 # 增加探测内容范围
 
+```shell
 ffprobe -analyzeduration 20M a.mp4
+```
+
+
 
 # 显示完整的帮助选项
 
+```shell
 ffmpeg -h full
-
-
+```
 
 
 
