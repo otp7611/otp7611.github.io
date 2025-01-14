@@ -84,6 +84,8 @@ ffmpeg -y -i ~/share/keep/audioVideo.offset.mp4 -vf "drawtext=fontsize=36:fontco
 ffmpeg -i invert.mp4 -af "aphasemeter=video=0:phasing=1:angle=150:duration=1:tolerance=0.001,ametadata=print:file=inwav-phase.txt" -vn -f null -
 ```
 
+ametadata是一个filter, 用于处理AVFrame中的metadata数据，print表示打印出来，默认是打印到终端。
+
 # 增加探测内容范围
 
 ```shell
@@ -98,5 +100,11 @@ ffprobe -analyzeduration 20M a.mp4
 ffmpeg -h full
 ```
 
+# 生成音频波型视频
 
+```
+ffmpeg -i ~/share/keep/audioVideo.audio.invert.mp4 -filter_complex "[0:a]showwaves=s=640x480:mode=line:rate=25,format=yuv420p[v]" -map "[v]" -map 0:a showwaves.mp4
+```
+
+-map用于选择流过filter后的pad流，这里表示把[v]和0:a 即filter处理后的[v]流和第一个文件的音频写到文件showwaves.mp4。
 
