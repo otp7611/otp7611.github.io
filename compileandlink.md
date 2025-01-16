@@ -48,5 +48,13 @@ int func() {
 
 由于预编译头文件存在这个限制，所以要求工具链：1，即时更新预编译头文件，2，不要在生成预编译中间文件后，就立即删除对应的头文件。要求2主要会发生在使用沙箱编译的情况，比如bazel默认就是用沙箱编译。
 
+## 避免导致的mtime发生修改导致pch文件失效的方法
 
+https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-fpch-validate-input-files-content
+
+```shell
+-fpch-validate-input-files-content
+```
+
+当mtime发生改变时，比较文件内容。
 
