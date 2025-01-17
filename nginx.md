@@ -2,6 +2,19 @@
 
 官方文档https://nginx.org/en/docs/
 
+# nginx预定义的变量
+
+https://nginx.org/en/docs/http/ngx_http_core_module.html#variables
+
+$uri current URI in request, normalized
+
+http请求可以表示为：
+
+```nginx
+$scheme://$host$uri$is_args$args
+$scheme://$host$request_uri
+```
+
 # 路径匹配location
 
 参考文档：https://nginx.org/en/docs/http/ngx_http_core_module.html#location
@@ -41,6 +54,12 @@ location /127.0.0.1/ {
 ```
 
 如果请求为http://127.0.0.1/other.host.name/path?a=b那么会转发为http://other.host.name/path?a=b,这个请求会发到127.0.0.1:8000端口上。
+
+注意，如果location没有以/结尾会出现301重定向。
+
+注意，如果proxy_pass没有带uri（这里是/）,那么会把请求的完整uri传过去，否则location中的匹配部分（这里是/127.0.0.1/）会被替换成proxy_pass中的uri。就是http请求中的/127.0.0.1/替换成了/.
+
+https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass
 
 ## 正则匹配路径
 
