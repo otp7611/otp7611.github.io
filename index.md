@@ -22,3 +22,6 @@ markdown编辑工具Typora
 
 [ffmpeg工具的使用](/ffmpeg)
 
+# 使用nginx代理服务器
+
+[使用nginx代理服务器](/nginx)
