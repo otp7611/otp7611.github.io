@@ -8,6 +8,12 @@ markdown编辑工具Typora
 
 源码编辑工具sublime_text
 
+[json串解析工具jq](/jq)
+
+[音视频实用工具ffmpeg](/ffmpeg)
+
+[代理服务器nginx](/nginx)
+
 # 视频编码
 
 [视频编码初探](/media)
@@ -26,10 +32,3 @@ markdown编辑工具Typora
 
 [java工具链](/java)
 
-# ffmpeg工具的使用
-
-[ffmpeg工具的使用](/ffmpeg)
-
-# 使用nginx代理服务器
-
-[使用nginx代理服务器](/nginx)
