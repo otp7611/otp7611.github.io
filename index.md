@@ -6,6 +6,8 @@ markdown编辑工具Typora
 
 图片编辑工具gimp
 
+源码编辑工具sublime_text
+
 # 视频编码
 
 [视频编码初探](/media)
@@ -17,6 +19,8 @@ markdown编辑工具Typora
 # 服务构建
 
 [编译和链接](compileandlink.md)
+
+[java工具链](/java)
 
 # ffmpeg工具的使用
 
