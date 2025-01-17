@@ -18,6 +18,8 @@ markdown编辑工具Typora
 
 # 服务构建
 
+[bazel构建工具](/bazel)
+
 [编译和链接](compileandlink.md)
 
 [java工具链](/java)
