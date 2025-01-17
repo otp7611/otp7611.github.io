@@ -1,5 +1,14 @@
 编译和链接
 
+# 有用的编译期检查选项
+
+```
+-Werror=exceptions
+-Werror=unused-result
+```
+
+
+
 # 预编译头文件
 
 参考https://clang.llvm.org/docs/PCHInternals.html

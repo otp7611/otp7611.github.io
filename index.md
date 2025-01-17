@@ -32,3 +32,4 @@ markdown编辑工具Typora
 
 [java工具链](/java)
 
+[软件调试](/debug)
