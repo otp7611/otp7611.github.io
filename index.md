@@ -22,6 +22,8 @@ markdown编辑工具Typora
 
 [编译和链接](compileandlink.md)
 
+[交叉编译与构建用于编译的sysroot](/sysroot)
+
 [java工具链](/java)
 
 # ffmpeg工具的使用
