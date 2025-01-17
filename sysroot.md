@@ -56,7 +56,7 @@ add_definitions(-iwithsysroot /usr/include/freetype2)
 # 查看导出的符号
 
 ```
-readelf --wide  -s liveapi_debug | grep GLIBC_2.34
+readelf --wide  -s exec_app | grep GLIBC_2.34
 ```
 
 # golang交叉编译
