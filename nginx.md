@@ -64,8 +64,8 @@ https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass
 ## 正则匹配路径
 
 ```
-location ~ live.m3u8$ {
-        root /data/stream_m3u8/https;
+location ~ a.m3u8$ {
+        root /data/https;
         add_header Access-Control-Allow-Origin *;
     }
 
