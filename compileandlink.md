@@ -1,5 +1,14 @@
 编译和链接
 
+# 有用的编译期检查选项
+
+```
+-Werror=exceptions
+-Werror=unused-result
+```
+
+
+
 # 预编译头文件
 
 参考https://clang.llvm.org/docs/PCHInternals.html
@@ -57,4 +66,8 @@ https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-fpch-
 ```
 
 当mtime发生改变时，比较文件内容。
+
+这个行为和bazel是一样的。（https://github.com/bazelbuild/bazel/issues/21044）
+
+目的就是为了避免，未修改文件，只是touch更新了一下时候却导致重新编译的问题。
 

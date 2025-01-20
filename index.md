@@ -6,6 +6,14 @@ markdown编辑工具Typora
 
 图片编辑工具gimp
 
+源码编辑工具sublime_text
+
+[json串解析工具jq](/jq)
+
+[音视频实用工具ffmpeg](/ffmpeg)
+
+[代理服务器nginx](/nginx)
+
 # 视频编码
 
 [视频编码初探](/media)
@@ -16,9 +24,12 @@ markdown编辑工具Typora
 
 # 服务构建
 
+[bazel构建工具](/bazel)
+
 [编译和链接](compileandlink.md)
 
-# ffmpeg工具的使用
+[交叉编译与构建用于编译的sysroot](/sysroot)
 
-[ffmpeg工具的使用](/ffmpeg)
+[java工具链](/java)
 
+[软件调试](/debug)
