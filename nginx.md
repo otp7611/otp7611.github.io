@@ -116,5 +116,13 @@ drwxrwxrwx chenc chenc testm3u8
 
 从中可以看到，/data是一个链接。
 
+# 用本地文件响应请求
+
+```nginx
+    location ~ /livecast/(.*) {
+    	alias /tmp/my/$1;
+    }
+```
+
 
 
