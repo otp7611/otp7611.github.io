@@ -31,7 +31,7 @@ gcore <pid>
 # cdb
 
 ```
-cdb -lines -y "e:\pathtopdbfile;srv*http://msdl.microsoft.com/download/symbols"  -i app.exe -z e:\some.dmp
+"C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\cdb.exe" -lines -y "e:\pathtopdbfile;srv*http://msdl.microsoft.com/download/symbols"  -i app.exe -z e:\some.dmp
 .ecxr ; kb ;
 dt /r 树形显示成员变量
  dt 变量　成员变量a.成员变量a的成员变量

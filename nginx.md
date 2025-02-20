@@ -119,7 +119,7 @@ drwxrwxrwx chenc chenc testm3u8
 # 用本地文件响应请求
 
 ```nginx
-    location ~ /livecast/(.*) {
+    location ~ /prefixpath/(.*) {
     	alias /tmp/my/$1;
     }
 ```
