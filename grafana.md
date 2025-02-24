@@ -82,6 +82,26 @@ http://localhost:3333/connections/add-new-connection
 
 不用配置Authentication，因为prometheus默认没有认证。
 
+## 连接elasticsearch
+
+在添加数据中选择elasticsearch。
+
+connection url为：https://192.168.40.118:9200
+
+Authentications与elasticsearch重置密码后参数一致。这个参数可以通过curl确定。
+
+tls setting选择关闭证书验证Skip TLS certificate validation
+
+Elasticsearch details参数中配置index name, pattern(设置为no pattern), Time field name(设置为@timestamp)
+
+确认是否正常的命令：
+
+```shell
+curl -k -u elastic:$ELASTIC_PASSWORD -X GET "https://localhost:9200/testindex/_mapping?pretty"
+```
+
+应该会输出@timestamp，如果有@timestamp但是还是失败，请在kibana中discover一下数据内部，确认@timestamp是最近当前时间的毫秒整数。
+
 ## 以容器的方式安装
 
 ### docker-compose.yaml
@@ -111,6 +131,14 @@ docker的挂载方式bind mounts的权限与主机是一样的。如果主机的
 sudo docker exec --user root  -it grafana /bin/bash
 ```
 
+### 查看grafana的输出日志
+
+```
+sudo docker logs -t grafana
+```
+
+
+
 ## 对数据作图
 
 首先选择一个dashboard, 没有则创建。http://localhost:3333/dashboards
@@ -131,7 +159,78 @@ sudo docker exec --user root  -it grafana /bin/bash
  100*(1-(rate (node_cpu_seconds_total{mode="idle"}[2m])))
 ```
 
+# elasticsearch
+
+## elasticsearch
+
+```shell
+sudo docker pull docker.elastic.co/elasticsearch/elasticsearch:8.17.2
+sudo sysctl -w vm.max_map_count=262144
+sudo docker run --name es01 --net elastic -p 9200:9200 -it -m 4GB docker.elastic.co/elasticsearch/elasticsearch:8.17.2
+sudo docker start -i es01
+```
+
+内存需要配置为4GB否则会出现ERROR: Elasticsearch exited unexpectedly, with exit code 137
+
+### 重置密码
+
+记下重置后的密码
+
+```shell
+sudo docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic
+```
+
+一般这个密码导出到环境变量
+
+```
+export ELASTIC_PASSWORD=
+```
 
 
 
+### 重置kibana连接token
 
+记下token.
+
+```shell
+sudo docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
+```
+
+### 备份ca证书
+
+```shell
+sudo docker cp es01:/usr/share/elasticsearch/config/certs/http_ca.crt .
+```
+
+elasticsearch是用自签名的ca证书，向外提供https服务。
+
+### 测试是否安装正常
+
+```shell
+curl --cacert http_ca.crt -u elastic:$ELASTIC_PASSWORD https://localhost:9200
+```
+
+## kibana
+
+### kibana
+
+```shell
+sudo docker pull docker.elastic.co/kibana/kibana:8.17.2
+sudo docker run --name kib01 --net elastic -p 5601:5601 docker.elastic.co/kibana/kibana:8.17.2
+```
+
+运行后会提示你访问哪个地址。
+
+在浏览器中打开这个地址。
+
+### 导入数据
+
+数据格式为ndjson, 对象中一定要有@timestamp且为整数，单位是毫秒。导入完成后，在discover界面中确认。
+
+https://github.com/ndjson/ndjson-spec
+
+https://www.elastic.co/guide/en/kibana/8.17/connect-to-elasticsearch.html#_add_sample_data
+
+### 综合管理Stack Management
+
+在这里你可以管理index, dataview.
