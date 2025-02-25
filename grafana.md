@@ -210,6 +210,50 @@ elasticsearch是用自签名的ca证书，向外提供https服务。
 curl --cacert http_ca.crt -u elastic:$ELASTIC_PASSWORD https://localhost:9200
 ```
 
+### 使用api key
+
+先确认这个key有访问my-index的权限。
+
+```shell
+curl -k -H 'Authorization: ApiKey ******'  -X GET "https://localhost:9200/my-index/_mapping?pretty"
+```
+
+没有限制时会提示
+
+```
+elasticsearch.AuthorizationException: AuthorizationException(403, 'security_exception', 'action [cluster:monitor/main] is unauthorized for API key id [dyLlOpUBcNADYlky6Egd] of user [elastic], this action is granted by the cluster privileges [monitor,manage,all]')
+```
+
+这个表示没有权限monitor,manage,all
+
+### python测试程序
+
+```python
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+from elasticsearch import Elasticsearch
+
+client = Elasticsearch(
+  "https://localhost:9200",
+  ca_certs="../../http_ca.crt",
+  api_key="******",
+)
+
+print(client.info())
+
+```
+
+api_key在es中添加。client.info()权限是：
+
+```json
+    "cluster": [
+      "monitor"
+    ],
+```
+
+
+
 ## kibana
 
 ### kibana
