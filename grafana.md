@@ -102,6 +102,13 @@ curl -k -u elastic:$ELASTIC_PASSWORD -X GET "https://localhost:9200/testindex/_m
 
 应该会输出@timestamp，如果有@timestamp但是还是失败，请在kibana中discover一下数据内部，确认@timestamp是最近当前时间的毫秒整数。
 
+### 作图
+
+在添加监控图panel时，在raw视图能查到数据，但在metric视图不能作图。
+
+- 要确认数据项是数字，不能是字符串之类，如果不能只能用聚合函数比如counter, unique_counter来进行数字化。
+- 要确认数据源是连续的采样值，在一个时间间隔，如果只有一个时刻点的数据，是不能作图的。
+
 ## 以容器的方式安装
 
 ### docker-compose.yaml
@@ -160,6 +167,8 @@ sudo docker logs -t grafana
 ```
 
 # elasticsearch
+
+es中一个index的字段类型如果在数据进入后，就被确认下来，不能更改。如果需要@timestamp为date类型，一定要在添加数据到es前操作。在创建index后，在mapping选项配置中，添加@timestamp为date类型，然后再推流数据。
 
 ## elasticsearch
 
@@ -250,6 +259,41 @@ api_key在es中添加。client.info()权限是：
     "cluster": [
       "monitor"
     ],
+```
+
+### 增加用户
+
+首先要分配role
+
+```
+POST /_security/role/<role-name>
+{
+  "description": "Grants full access to all management features within the cluster.",
+  "cluster": ["all"],
+  "indices": [
+    {
+      "names": [ "*" ],
+      "privileges": ["all"]
+    }
+  ]
+}
+```
+
+然后让这个用户拥有这个role
+
+```
+POST /_security/user/<user-name>
+{
+  "password" : "<user-password>",
+  "roles" : [ "<role-name>" ],
+  "full_name" : "this is fullname"
+}
+```
+
+最后测试一下
+
+```
+curl --cacert http_ca.crt -u <user-name>:<user-password> https://localhost:9200/my-index/_mapping?pretty
 ```
 
 
