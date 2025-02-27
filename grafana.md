@@ -285,10 +285,12 @@ POST /_security/role/<role-name>
 POST /_security/user/<user-name>
 {
   "password" : "<user-password>",
-  "roles" : [ "<role-name>" ],
+  "roles" : [ "<role-name>", "kibana_admin" ],
   "full_name" : "this is fullname"
 }
 ```
+
+kibana_admin表示这个用户可以登录管理kibana
 
 最后测试一下
 
