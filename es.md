@@ -54,3 +54,39 @@ my-index-template使用刚才两个组件模板。
              records.append(item)
 ```
 
+# 使用Time series data stream (TSDS)
+
+在ES中如果字段是"A.B":???，那么等价于"A": {"B": ???}
+
+Time series data stream是data stream的子类，data  stream的约束在Time series data stream都存在。
+
+TSDS还有如下特殊的地方：
+
+## _id
+
+the document `_id` is a hash of the document’s dimensions and `@timestamp`.也就是说，_id是唯一的，这个唯一来自(dimensions, @timestamp)的组合唯一。如果不唯一，则入库失败。
+
+## index.mode
+
+{  "index": {    "lifecycle": {      "name": "testtsds-lifecycle-policy"    },    "mode": "time_series"  } } 就是index.mode必须是time_series
+
+## index.routing_path
+
+必须指定哪些字段是dimensions，不能为空。这个dimension字段可以在mapping中用"time_series_dimension": true来标记。比如：
+
+```
+{
+  "dynamic_templates": [],
+  "properties": {
+    "testid": {
+      "time_series_dimension": true,
+      "type": "keyword"
+    },
+    "testclass": {
+      "time_series_dimension": true,
+      "type": "keyword"
+    }
+  }
+}
+```
+
