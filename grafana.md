@@ -166,6 +166,16 @@ sudo docker logs -t grafana
  100*(1-(rate (node_cpu_seconds_total{mode="idle"}[2m])))
 ```
 
+### 对ES数据源在同一个panel作多条曲线
+
+从概念上讲，这个是timeseries-multi。它的实现是通过group by.
+
+如果想分组，分组后每一个组对应一条曲线。
+
+增加group by, 类型选Terms, 字段选用于分组的字段。在options中，可以选排序后前n组数据。
+
+注意：Lucene Query参数Alias保持为空。这样才能显示分组字段对应的值。
+
 # elasticsearch
 
 es中一个index的字段类型如果在数据进入后，就被确认下来，不能更改。如果需要@timestamp为date类型，一定要在添加数据到es前操作。在创建index后，在mapping选项配置中，添加@timestamp为date类型，然后再推流数据。

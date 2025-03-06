@@ -8,6 +8,8 @@ markdown编辑工具Typora
 
 源码编辑工具sublime_text
 
+管理应用输出工具rotatelogs
+
 [json串解析工具jq](/jq)
 
 [音视频实用工具ffmpeg](/ffmpeg)
