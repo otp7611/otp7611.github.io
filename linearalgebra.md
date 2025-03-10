@@ -176,3 +176,9 @@ X_complete = X_particular + K*X_normal
 # 线性相关性，基和维数
 
 表示看到c_1*x_1 + c_2 * x_2 + ... + c_n * x_n表示式时，考虑把它写成矩阵形式，用矩阵进行分析。
+
+矩阵A， rank(a)=#privot column=dim C(A)
+
+解空间dim: n - rank(a)
+
+注意：矩阵才有秩，空间才讲维数。
