@@ -1,6 +1,6 @@
 音视频技术漫游
 
-# linux下实用工具
+# 实用工具
 
 markdown编辑工具Typora
 
@@ -8,21 +8,37 @@ markdown编辑工具Typora
 
 源码编辑工具sublime_text
 
+管理应用输出工具rotatelogs
+
 [json串解析工具jq](/jq)
 
-[音视频实用工具ffmpeg](/ffmpeg)
+[推流工具obs](/obs)
 
-[代理服务器nginx](/nginx)
+# 基础理论
+
+[线性代数](/linearalgebra)
 
 # 视频编码
+
+[音视频实用工具ffmpeg](/ffmpeg)
 
 [视频编码初探](/media)
 
 # 网络传输
 
+[代理服务器nginx](/nginx)
+
 [rtmp和传输h265视频](/rtmpandh265)
 
+# 大数据
+
+[ES的使用](/es)
+
+[grafana数据可视化](/grafana)
+
 # 服务构建
+
+[源码管理工具git](/git)
 
 [bazel构建工具](/bazel)
 
@@ -33,3 +49,7 @@ markdown编辑工具Typora
 [java工具链](/java)
 
 [软件调试](/debug)
+
+# 系统相关
+
+[linux](/linux)
