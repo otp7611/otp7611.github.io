@@ -12,21 +12,33 @@ markdown编辑工具Typora
 
 [json串解析工具jq](/jq)
 
-[音视频实用工具ffmpeg](/ffmpeg)
+[推流工具obs](/obs)
 
-[代理服务器nginx](/nginx)
+# 基础理论
 
-[源码管理工具](/git)
+[线性代数](/linearalgebra)
 
 # 视频编码
+
+[音视频实用工具ffmpeg](/ffmpeg)
 
 [视频编码初探](/media)
 
 # 网络传输
 
+[代理服务器nginx](/nginx)
+
 [rtmp和传输h265视频](/rtmpandh265)
 
+# 大数据
+
+[ES的使用](/es)
+
+[grafana数据可视化](/grafana)
+
 # 服务构建
+
+[源码管理工具git](/git)
 
 [bazel构建工具](/bazel)
 
