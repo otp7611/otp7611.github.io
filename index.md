@@ -1,6 +1,6 @@
 音视频技术漫游
 
-# linux下实用工具
+# 实用工具
 
 markdown编辑工具Typora
 
@@ -15,6 +15,8 @@ markdown编辑工具Typora
 [音视频实用工具ffmpeg](/ffmpeg)
 
 [代理服务器nginx](/nginx)
+
+[源码管理工具](/git)
 
 # 视频编码
 
@@ -35,3 +37,7 @@ markdown编辑工具Typora
 [java工具链](/java)
 
 [软件调试](/debug)
+
+# 系统相关
+
+[linux](/linux)
