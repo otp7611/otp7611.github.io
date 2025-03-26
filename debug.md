@@ -68,3 +68,15 @@ dv 局部变量
 
 ```
 
+# 处理内存问题
+
+主要是内存泄漏和内存未释放导致的变大
+
+```
+valgrind --tool=massif <prog> ...
+massif-visualizer massif.out.xxxx
+```
+
+![](static/massif.png)
+
+图表中显示是的每个时候内存的使用量，这种上升的图，一般是有内存未放在。具体是哪个函数导致由，可以由massif-visualizer中列出的主要分配了内存的函数。分析每个函数的调用栈，看是否存在未释放的地方。
