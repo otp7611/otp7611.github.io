@@ -72,6 +72,10 @@ scrape_configs:
 
 访问http://localhost:3000
 
+第一次登录，账户信息参数都是admin
+
+https://grafana.com/docs/grafana/latest/setup-grafana/sign-in-to-grafana/
+
 ## 连接prometheus
 
 grafana支持多个数据库，如果想要连接prometheus，那就需要添加一个数据源prometheus。
@@ -202,6 +206,8 @@ docker start 带参数-i表示交互模式，如果docker start停止，则容�
 ```
 
 这里表示内存控制在4g
+
+但是在实际中，java程序最大用量会比4G大，但是小于2x4G=8G
 
 ### 重置密码
 
