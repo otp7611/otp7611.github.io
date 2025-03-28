@@ -8,7 +8,13 @@ markdown编辑工具Typora
 
 源码编辑工具sublime_text
 
-管理应用输出工具rotatelogs
+## 管理应用输出工具rotatelogs
+
+```
+nohup bash -c 'python3 main.py -1 2>&1 | rotatelogs -l /data/node_python.%Y-%m-%d-%H_%M_%S 30M' >/dev/null 2>&1 &
+```
+
+
 
 [json串解析工具jq](/jq)
 
