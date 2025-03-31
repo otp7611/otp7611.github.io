@@ -7,7 +7,20 @@
 -Werror=unused-result
 ```
 
+## 避免在条件判定时错误赋值
 
+```
+-Werror=parentheses
+```
+
+如果有错误赋值就是报错
+
+```
+if (x=1) {} 就会报错
+error: using the result of an assignment as a condition without parentheses [-Werror,-Wparentheses]
+```
+
+如果你真希望这么做，就用括号括起来。
 
 # 预编译头文件
 
