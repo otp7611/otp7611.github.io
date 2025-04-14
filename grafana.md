@@ -72,6 +72,10 @@ scrape_configs:
 
 访问http://localhost:3000
 
+第一次登录，账户信息参数都是admin
+
+https://grafana.com/docs/grafana/latest/setup-grafana/sign-in-to-grafana/
+
 ## 连接prometheus
 
 grafana支持多个数据库，如果想要连接prometheus，那就需要添加一个数据源prometheus。
@@ -185,11 +189,25 @@ es中一个index的字段类型如果在数据进入后，就被确认下来，�
 ```shell
 sudo docker pull docker.elastic.co/elasticsearch/elasticsearch:8.17.2
 sudo sysctl -w vm.max_map_count=262144
-sudo docker run --name es01 --net elastic -p 9200:9200 -it -m 4GB docker.elastic.co/elasticsearch/elasticsearch:8.17.2
-sudo docker start -i es01
+sudo docker run --name es01 --net elastic -p 9200:9200 -it -m 5GB docker.elastic.co/elasticsearch/elasticsearch:8.17.2
+sudo docker start es01
 ```
 
+docker start 带参数-i表示交互模式，如果docker start停止，则容器停止。如果不带，则会在后台启动这个容器。
+
+### 限制es程序java虚拟机内存使用量
+
 内存需要配置为4GB否则会出现ERROR: Elasticsearch exited unexpectedly, with exit code 137
+
+```
+/usr/share/elasticsearch/config/jvm.options
+-Xms4g
+-Xmx4g
+```
+
+这里表示内存控制在4g
+
+但是在实际中，java程序最大用量会比4G大，但是小于2x4G=8G
 
 ### 重置密码
 

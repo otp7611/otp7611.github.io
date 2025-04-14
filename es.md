@@ -90,3 +90,40 @@ the document `_id` is a hash of the document’s dimensions and `@timestamp`.也
 }
 ```
 
+# api_key权限
+
+
+
+```
+{
+  "my-index-key-role": {
+    "cluster": [
+      "monitor"
+    ],
+    "indices": [
+      {
+        "names": [
+          "testtsdsindex",          
+          "my-index"
+        ],
+        "privileges": [
+          "auto_configure",
+          "create_index",
+          "manage",
+          "all"
+        ],
+        "allow_restricted_indices": false
+      }
+    ],
+    "applications": [],
+    "run_as": [],
+    "metadata": {},
+    "transient_metadata": {
+      "enabled": true
+    }
+  }
+}
+```
+
+ES的权限是由role作组合的。一个用户需要权限的话，就要去选择这些role. api_key的权限设置时直接定义了一个role，在这里就是my-index-key-role。
+
