@@ -152,3 +152,41 @@ VideoSendStreamImpl::VideoSendStreamImpl
   -> rtp_video_sender_(transport->CreateRtpVideoSender())
 ```
 
+### 视频采集到编码
+
+```
+webrtc::SctMrtcH264EncoderImpl::Encode
+ <- webrtc::VideoStreamEncoder::EncodeVideoFrame  video/video_stream_encoder.cc:2047
+ <- VideoStreamEncoder::OnBitrateUpdated   如果有pending_frame_，则会编码发送
+ <- webrtc::internal::VideoSendStreamImpl::OnBitrateUpdated  video/video_send_stream_impl.cc:942
+ 
+VideoStreamEncoder::EncodeVideoFrame
+ <- webrtc::VideoStreamEncoder::MaybeEncodeVideoFrame  可能会配置pending_frame_  video/video_stream_encoder.cc
+ <- webrtc::VideoStreamEncoder::OnFrame
+ <- webrtc::VideoStreamEncoder::CadenceCallback::OnFrame  调整帧时间信息
+ <- webrtc::(anonymous namespace)::PassthroughAdapterMode::OnFrame   video/frame_cadence_adapter.cc:79
+ <- FrameCadenceAdapterImpl::OnFrameOnMainQueue
+ <- webrtc::(anonymous namespace)::FrameCadenceAdapterImpl::OnFrame(webrtc::VideoFrame const&)
+ <- rtc::VideoBroadcaster::OnFrame(webrtc::VideoFrame const&)  media/base/video_broadcaster.cc
+ <- webrtc::test::TestVideoCapturer::OnFrame(webrtc::VideoFrame const&)
+ <- webrtc::test::SctMrtcFrameGeneratorCapturer::InsertFrame()  mrtc/framegeneratorcapturer.cpp:113
+ 
+webrtc::VideoStreamEncoder::VideoStreamEncoder
+ <- webrtc::internal::(anonymous namespace)::CreateVideoStreamEncoder   video/video_send_stream_impl.cc:355
+ <- webrtc::internal::VideoSendStreamImpl::VideoSendStreamImpl  video/video_send_stream_impl.cc:411
+ <- webrtc::internal::Call::CreateVideoSendStream  call/call.cc:970
+ <- cricket::WebRtcVideoSendChannel::WebRtcVideoSendStream::RecreateWebRtcStream()   media/engine/webrtc_video_engine.cc:2648
+ <- cricket::WebRtcVideoSendChannel::WebRtcVideoSendStream::SetCodec  media/engine/webrtc_video_engine.cc:2034
+ <- cricket::WebRtcVideoSendChannel::WebRtcVideoSendStream::SetSenderParameters
+ <- cricket::WebRtcVideoSendChannel::ApplyChangedParams(cricket::WebRtcVideoSendChannel::ChangedSenderParameters const&)
+ <- cricket::WebRtcVideoSendChannel::SetSenderParameters(cricket::VideoSenderParameters const&)
+ <- cricket::VideoChannel::SetRemoteContent_w   pc/channel.cc:1227
+ <- cricket::BaseChannel::SetRemoteContent 
+ <- webrtc::SdpOfferAnswerHandler::PushdownMediaDescription   pc/sdp_offer_answer.cc:4938
+ 
+RtpPayloadParams::GetRtpVideoHeader
+  <- RtpVideoSender::OnEncodedImage
+  <- VideoStreamEncoder::OnEncodedImage
+ 
+```
+

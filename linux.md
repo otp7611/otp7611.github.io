@@ -20,3 +20,10 @@ mount -t cgroup -o cpuacct none /sys/fs/cgroup/cpuacct
 echo "/var/core/core-%e-%p-%t" > /proc/sys/kernel/core_pattern
 ```
 
+# 查看系统DNS
+
+```
+dig <域名>
+nsloopup <域名>
+```
+
