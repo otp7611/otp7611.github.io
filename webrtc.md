@@ -18,6 +18,18 @@ webrtc::internal::VideoReceiveStream2::CreateAndRegisterExternalDecoder创建解
 
 webrtc::internal::VideoReceiveStream2::OnCompleteFrame把重组后的编码帧发给VideoStreamBufferController 变量为buffer_, 当可以解一帧时，再把编码帧传递给VideoReceiveStream2::OnEncodedFrame。VideoReceiveStream2::OnEncodedFrame再把帧传递给VideoReceiver2变量为 video_receiver。
 
+# 视频数据发送
+
+采集的帧通过rtc::VideoBroadcaster::OnFrame传递到webrtc::VideoStreamEncoder::OnFrame。如果编码没有准备好就会缓存到pending_frame_ （webrtc::VideoStreamEncoder::MaybeEncodeVideoFrame）,准备好后会调用webrtc::VideoStreamEncoder::EncodeVideoFrame，如果有缓存的pending_frame_则会对它进行编码。
+
+编码器得到编码帧后，调用到VideoStreamEncoder::OnEncodedImage。通过sink_->OnEncodedImage传递到VideoSendStreamImpl::OnEncodedImage，最后通过RtpVideoSender::OnEncodedImage发送出去。
+
+VideoSendStreamImpl::VideoSendStreamImpl会创建RtpVideoSender，并把它设置到VideoStreamEncoder。
+
+编码器的创建是在webrtc::VideoStreamEncoder::ReconfigureEncoder。
+
+
+
 # 详细代码
 
 ## 视频数据接收
