@@ -27,3 +27,9 @@ dig <域名>
 nsloopup <域名>
 ```
 
+# 查看分区使用情况
+
+```
+sudo du -d 1 -h / --exclude=/run --exclude=/dev/shm --exclude=/media/workspace --exclude=/home --exclude=/proc --exclude=/snap
+```
+
