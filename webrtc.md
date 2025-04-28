@@ -28,7 +28,15 @@ VideoSendStreamImpl::VideoSendStreamImpl会创建RtpVideoSender，并把它设�
 
 编码器的创建是在webrtc::VideoStreamEncoder::ReconfigureEncoder。
 
+# 音频数据接收
 
+RtpDemuxer收到数据后，会传递给webrtc::voe::(anonymous namespace)::ChannelReceive::OnRtpPacket。ChannelReceive会把数据给webrtc::NetEqImpl调用解码器进行解码webrtc::AudioDecoderOpusImpl::ParsePayload。
+
+ChannelReceive可以进行播放控制playing_ 和得到rtp向sdp的映射表 payload_type_map_。
+
+# 音频数据发送
+
+音频编码器编译出数据后调用packetization_callback_->SendData，即webrtc::voe::(anonymous namespace)::ChannelSend::SendData发送数据.
 
 # 详细代码
 
@@ -199,6 +207,107 @@ webrtc::VideoStreamEncoder::VideoStreamEncoder
 RtpPayloadParams::GetRtpVideoHeader
   <- RtpVideoSender::OnEncodedImage
   <- VideoStreamEncoder::OnEncodedImage
+ 
+```
+
+## 音频数据接收
+
+```
+webrtc::AudioDecoder::Decode   api/audio_codecs/audio_decoder.cc:93
+ <- webrtc::OpusFrame::Decode  modules/audio_coding/codecs/opus/audio_coder_opus_common.h:66 
+ <- webrtc::NetEqImpl::DecodeLoop  modules/audio_coding/neteq/neteq_impl.cc:1428
+ <- webrtc::NetEqImpl::Decode
+ <- NetEqImpl::GetAudioInternal
+ <- NetEqImpl::GetAudio
+ <- webrtc::voe::(anonymous namespace)::ChannelReceive::GetAudioFrameWithInfo
+ <- ChannelReceive::GetAudioFrameWithInfo
+ <- AudioReceiveStreamImpl::GetAudioFrameWithInfo
+ 这里往下是播放了
+ 
+webrtc::OpusFrame::OpusFrame modules/audio_coding/codecs/opus/audio_coder_opus_common.h:42
+ <- webrtc::AudioDecoderOpusImpl::ParsePayload audio_decoder_opus.cc:57
+ <- webrtc::NetEqImpl::InsertPacketInternal(webrtc::RTPHeader const&, rtc::ArrayView<unsigned char const, -4711l>, webrtc::RtpPacketInfo const&)  modules/audio_coding/neteq/neteq_impl.cc:607
+ 把包都缓存在packet_buffer_了。
+ 
+ <- webrtc::NetEqImpl::InsertPacket(webrtc::RTPHeader const&, rtc::ArrayView<unsigned char const, -4711l>, webrtc::RtpPacketInfo const&) modules/audio_coding/neteq/neteq_impl.cc:191
+ <- webrtc::voe::(anonymous namespace)::ChannelReceive::OnReceivedPayloadData  audio/channel_receive.cc:379
+ <- webrtc::voe::(anonymous namespace)::ChannelReceive::ReceivePacket audio/channel_receive.cc:777
+ <- webrtc::voe::(anonymous namespace)::ChannelReceive::OnRtpPacket( audio/channel_receive.cc:717
+ <- webrtc::RtpDemuxer::OnRtpPacket  call/rtp_demuxer.cc:271
+ 这里开始是rtp处理
+ 
+ 
+webrtc::AudioDecoderOpus::MakeAudioDecoder api/audio_codecs/opus/audio_decoder_opus.h:43
+ <- webrtc::audio_decoder_factory_template_impl::CreateDecoder  api/audio_codecs/audio_decoder_factory_template.h:67
+ <- webrtc::audio_decoder_factory_template_impl::Helper api/audio_codecs/audio_decoder_factory_template.h:107
+ <- webrtc::audio_decoder_factory_template_impl::AudioDecoderFactoryT audio_decoder_factory_template.h:129
+ <- webrtc::DecoderDatabase::DecoderInfo::GetDecoder() const  modules/audio_coding/neteq/decoder_database.cc:66
+ <- webrtc::DecoderDatabase::DecoderInfo::SampleRateHz() const modules/audio_coding/neteq/decoder_database.h:62
+ 这里创建decoder. sdp中有sample rate 配置。webrtc::DecoderDatabase::DecoderInfo中有decoder所有配置信息。
+...
+ <- webrtc::NetEqImpl::InsertPacketInternal modules/audio_coding/neteq/neteq_impl.cc:488
+```
+
+## 音频数据的发送
+
+```
+webrtc::AudioEncoderOpusImpl::EncodeImpl modules/audio_coding/codecs/opus/audio_encoder_opus.cc:585
+ <- webrtc::AudioEncoder::Encode api/audio_codecs/audio_encoder.cc:53
+ <- webrtc::(anonymous namespace)::AudioCodingModuleImpl::Encode modules/audio_coding/acm2/audio_coding_module.cc:238
+ <- webrtc::(anonymous namespace)::AudioCodingModuleImpl::Add10MsData modules/audio_coding/acm2/audio_coding_module.cc:325 
+ <- webrtc::voe::(anonymous namespace)::ChannelSend::ProcessAndEncodeAudio audio/channel_send.cc:870
+ <- webrtc::internal::AudioSendStream::SendAudioData  audio/audio_send_stream.cc:386
+ <- webrtc::AudioTransportImpl::SendProcessedData  audio/audio_transport_impl.cc:200
+ <- webrtc::AudioTransportImpl::RecordedDataIsAvailable audio/audio_transport_impl.cc:180
+ number_of_frames=441, bytes_per_sample=2, number_of_channels=1, sample_rate=44100, audio_delay_milliseconds=11
+ <- webrtc::AudioDeviceBuffer::Del iverRecordedData() modules/audio_device/audio_device_buffer.cc:318
+ <- webrtc::AudioDeviceLinuxPulse::ProcessRecordedData modules/audio_device/linux/audio_device_pulse_linux.cc:1968
+ <- webrtc::AudioDeviceLinuxPulse::ReadRecordedData(void const*, unsigned long)   modules/audio_device/linux/audio_device_pulse_linux.cc:1915
+ 
+ 
+AudioCodingModuleImpl::Encode
+ -> packetization_callback_->SendData
+ -> webrtc::voe::(anonymous namespace)::ChannelSend::SendData
+ -> ChannelSend::SendRtpAudio
+ 
+ 
+ChannelSend::ChannelSend
+ 创建编码器，并把回调设置为自己
+ -> audio_coding_->RegisterTransportCallback(this)
+ 
+AudioEncoderOpusImpl::AudioEncoderOpusImpl()
+ -> webrtc::AudioEncoderOpus::MakeAudioEncoder  audio_codecs/opus/audio_encoder_opus.cc:50
+ -> webrtc::audio_encoder_factory_template_impl::CreateEncoder<webrtc::AudioEncoderOpus, void>  api/audio_codecs/audio_encoder_factory_template.h:68
+ -> webrtc::internal::AudioSendStream::SetupSendCodec(webrtc::AudioSendStream::Config const&) audio/audio_send_stream.cc:566
+ -> webrtc::internal::AudioSendStream::ReconfigureSendCodec   audio/audio_send_stream.cc:657
+ -> AudioSendStream::ConfigureStream audio/audio_send_stream.cc:305
+ -> webrtc::internal::AudioSendStream::Reconfigure  audio/audio_send_stream.cc:180
+ -> cricket::WebRtcVoiceSendChannel::WebRtcAudioSendStream::ReconfigureAudioSendStream  media/engine/webrtc_voice_engine.cc:1235
+ -> cricket::WebRtcVoiceSendChannel::WebRtcAudioSendStream::SetSendCodecSpec media/engine/webrtc_voice_engine.cc:906
+ -> cricket::WebRtcVoiceSendChannel::SetSendCodecs media/engine/webrtc_voice_engine.cc:1523
+// Scan through the list to figure out the codec to use for sending. 
+ -> cricket::WebRtcVoiceSendChannel::SetSenderParameters media/engine/webrtc_voice_engine.cc:1351
+webrtc_voice_engine.cc:1319: WebRtcVoiceMediaChannel::SetSenderParameters: {codecs: [AudioCodec[111:opus:48000:0:2], AudioCodec[63:red:48000:0:2
+], AudioCodec[110:telephone-event:48000:0:1]], extensions: [{uri: http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01, id: 3}, {uri: http://www.webrtc.org/experiments/r
+tp-hdrext/abs-send-time, id: 2}, {uri: urn:ietf:params:rtp-hdrext:sdes:mid, id: 4}, {uri: urn:ietf:params:rtp-hdrext:ssrc-audio-level, id: 1}], extmap-allow-mixed: true, max_bandwidth_bps: -1, mid: 0, options: AudioOptions {}, rtcp: {reduced_size:true, remote_estimate:false}}
+
+ -> cricket::VoiceChannel::SetRemoteContent_w pc/channel.cc:967
+ -> cricket::BaseChannel::SetRemoteContent pc/channel.cc:291
+ 
+
+AudioEncoderOpusImpl::SdpToConfig
+这里已经保证opus编码器是48000Hz和双声道
+ <- webrtc::AudioEncoderOpusImpl::AppendSupportedEncoders modules/audio_coding/codecs/opus/audio_encoder_opus.cc:215
+ <- webrtc::AudioEncoderOpus::AppendSupportedEncoders api/audio_codecs/opus/audio_encoder_opus.cc:34
+ <- webrtc::audio_encoder_factory_template_impl::Helper
+ <- webrtc::audio_encoder_factory_template_impl::AudioEncoderFactoryT
+ <- cricket::WebRtcVoiceEngine::Init media/engine/webrtc_voice_engine.cc:508
+ 
+webrtc::CreateOpusAudioDecoderFactory()
+ -> AudioDecoderOpus::AppendSupportedDecoders
+ AudioDecoderOpus::SdpToConfig
+ 这里已经保证opus解码编码器是48000Hz和双声道
+ 
  
 ```
 
