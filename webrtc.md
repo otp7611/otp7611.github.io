@@ -309,5 +309,28 @@ webrtc::CreateOpusAudioDecoderFactory()
  这里已经保证opus解码编码器是48000Hz和双声道
  
  
+webrtc::AudioDeviceLinuxPulse::AudioDeviceLinuxPulse
+ <- webrtc::AudioDeviceModuleImpl::CreatePlatformSpecificObjects
+ <- webrtc::AudioDeviceModule::CreateForTest
+ <- webrtc::AudioDeviceModule::Create
+ <- cricket::WebRtcVoiceEngine::Init    media/engine/webrtc_voice_engine.cc:525
+ <- cricket::CompositeMediaEngine::Init
+ <- webrtc::ConnectionContext::ConnectionContext pc/connection_context.cc:175
+ 
+webrtc::AudioDeviceLinuxPulse::AttachAudioBuffer(webrtc::AudioDeviceBuffer*)
+ <- webrtc::AudioDeviceModuleImpl::AttachAudioBuffer modules/audio_device/audio_device_impl.cc:274
+ 
+AudioDeviceModuleImpl::RegisterAudioCallback
+ <- cricket::WebRtcVoiceEngine::Init() media/engine/webrtc_voice_engine.cc:551
+ 
+cricket::WebRtcVoiceEngine::WebRtcVoiceEngine media/engine/webrtc_voice_engine.cc:456
+如果adm为空，就会创建默认的音频设备。
+ <- webrtc::(anonymous namespace)::MediaFactoryImpl::CreateMediaEngine api/enable_media.cc:57
+ adm是由deps.adm传入的参数。
+ <- webrtc::ConnectionContext::ConnectionContext pc/connection_context.cc:104
+ <- webrtc::ConnectionContext::Create pc/connection_context.cc:83
+ <- webrtc::PeerConnectionFactory::Create    pc/peer_connection_factory.cc:81
+ <- webrtc::CreateModularPeerConnectionFactory    pc/peer_connection_factory.cc:67
+ <- sct::mrtc::PeerConnection::onInit(  
 ```
 
