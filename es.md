@@ -68,7 +68,7 @@ the document `_id` is a hash of the document’s dimensions and `@timestamp`.也
 
 ## index.mode
 
-{  "index": {    "lifecycle": {      "name": "testtsds-lifecycle-policy"    },    "mode": "time_series"  } } 就是index.mode必须是time_series
+{  "index": {  "number_of_replicas": "0",   "lifecycle": {      "name": "testtsds-lifecycle-policy"    },    "mode": "time_series"  } } 就是index.mode必须是time_series
 
 ## index.routing_path
 
@@ -127,3 +127,12 @@ the document `_id` is a hash of the document’s dimensions and `@timestamp`.也
 
 ES的权限是由role作组合的。一个用户需要权限的话，就要去选择这些role. api_key的权限设置时直接定义了一个role，在这里就是my-index-key-role。
 
+# index lifecycle management (ILM)
+
+如果indice的健康状态不是green，它是不会进入delete阶段的。
+
+如果是单节点的es, 但是你没有配置number_of_replicas，那么它会默认为1，且始终为yellow导致无法被删除。所以需要把它显示配置为0.
+
+配置为0后，它就自动会变成了green. 
+
+进入delete阶段，它不一定会立即删除，但是它最终会被删除。

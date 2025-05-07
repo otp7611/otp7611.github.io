@@ -1,5 +1,14 @@
 使用ffmpeg命令行工具
 
+# 编译
+
+在容器中编译
+
+```shell
+./configure --enable-libmp3lame --enable-cuda-nvcc --enable-cuda --enable-cuvid --enable-nvenc --enable-nonfree --enable-libnpp --extra-cflags=-I/usr/local/cuda/include --extra-ldflags=-L/usr/local/cuda/lib64 --prefix=/ffmpeg-npp/instdir --disable-indevs --disable-outdevs --enable-openssl --extra-libs=-ldl --enable-gpl --enable-libx264 --enable-libx265 --extra-libs='-lnuma -lstdc++ -lm -lgcc_s -lgcc -lgcc_s -lgcc -lrt -ldl -lpthread' --nvcc=/usr/local/cuda-10.2/bin/nvcc --enable-libfreetype
+
+```
+
 # 转码
 
 https://ffmpeg.org/ffmpeg-filters.html
@@ -72,11 +81,45 @@ ffprobe -show_frames 'a.m3u8' | grep pict_type
 ffmpeg -i a.mp4 -i v.mp4 -map 0:0 -map 1:0 -c copy my.mp4
 ```
 
-# 给视频添加pts时间显示
+# 给视频添加文字水印
+
+```
+ffmpeg -t 10 -hwaccel_device 0 -gpu 0 -c:v h264_cuvid -i ~/share/keep/audioVideo.offset.mp4 -i ~/download/0.png -filter_complex '[0:v]hwupload_cuda=device=0,scale_cuda=1920:1080:format=yuv420p,hwdownload,drawtext=fontfile=/app/resources/fonts/0:text=你  好:fontcolor=0x0000FF80:fontsize=36:x=w-tw:y=h-th' -gpu 0 -c:v h264_nvenc -b:v 2500K -ac 1 -c:a aac -bsf:a aac_adtstoasc -hls_playlist_type vod -hls_flags discont_start -strict -2 -y bottom-right.mp4
+```
+
+
+
+## 给视频添加pts时间显示
 
 ```shell
 ffmpeg -y -i ~/share/keep/audioVideo.offset.mp4 -vf "drawtext=fontsize=36:fontcolor=yellow:text='%{pts\:hms}':x=20:y=20" audioVideo.timestamp.mp4
 ```
+
+# 给图片加文字水印
+
+```shell
+ffmpeg -t 10 -hwaccel_device 0 -gpu 0 -c:v h264_cuvid -i ~/share/keep/audioVideo.offset.mp4 -i ~/download/0.png -ss 00:00:1.000 -update true -vframes 1 -filter_complex "fps=15,hwupload_cuda=device=0,scale_cuda=1920:1080:format=yuv420p,scale_cuda=format=yuv420p,hwdownload,drawtext=fontfile=/app/resources/fonts/0:text=你  好:fontcolor=0x0000FF80:fontsize=36:x=0:y=0" -strict -2 -pix_fmt yuv420p -gpu 0 -b:v 5000K  -y a.jpg
+```
+
+hwdownload只支持yuv420p格式
+
+# 给视频添加图片水印
+
+```shell
+ffmpeg -t 10 -hwaccel_device 0 -gpu 0 -c:v h264_cuvid -i ~/share/keep/audioVideo.offset.mp4 -i ~/download/0.png -filter_complex '[0:v]hwupload_cuda=device=0,scale_cuda=1920:1080:format=yuv420p[base];[1:v]format=pix_fmts=rgba,colorchannelmixer=aa=0.1,scale=trunc(iw*50/200)*2:trunc(ih*50/200)*2,hwupload_cuda=device=0[overlay_video];[base][overlay_video]overlay_cuda=x=W-w:y=0' -gpu 0 -c:v h264_nvenc -b:v 2500K -ac 1 -c:a aac -bsf:a aac_adtstoasc -hls_playlist_type vod -hls_flags discont_start -strict -2 -y pic-top-right.mp4
+```
+
+# 给图片加图片水印
+
+```
+ffmpeg -t 10 -hwaccel_device 0 -gpu 0 -c:v h264_cuvid -i ~/share/keep/audioVideo.offset.mp4 -i ~/download/0.png -ss 00:00:1.000 -update true -vframes 1 -filter_complex "fps=15,hwupload_cuda=device=0,scale_cuda=1920:1080,scale_cuda=format=yuv420p[base];[1:v]format=pix_fmts=rgba,colorchannelmixer=aa=0.5,scale=trunc(iw*50/200)*2:trunc(ih*50/200)*2,hwupload_cuda=device=0[overlay_video];[base][overlay_video]overlay_cuda=x=W-w:y=H-h,hwdownload" -strict -2 -pix_fmt yuv420p -gpu 0 -b:v 5000K  -y a.jpg
+```
+
+overlay_cuda只支持yuv420, 而gpu默认使用nv12所以要用scale_cuda=format=yuv420p[base]
+
+jpg只支持软编，所以用hwdownload，注意如果已经是软件环境，不能再次用hwdownload。
+
+-strict -2让jpg支持非yuvj***格式
 
 # 检测反相
 
