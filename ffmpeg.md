@@ -151,3 +151,15 @@ ffmpeg -i ~/share/keep/audioVideo.audio.invert.mp4 -filter_complex "[0:a]showwav
 
 -map用于选择流过filter后的pad流，这里表示把[v]和0:a 即filter处理后的[v]流和第一个文件的音频写到文件showwaves.mp4。
 
+# 同时输出多种格式文件
+
+```shell
+ffmpeg -t 60 -hwaccel_device 0 -gpu 0 -c:v h264_cuvid -i ~/share/keep/audioVideo.offset.mp4 -i ~/download/0.png -filter_complex 'drawtext=fontfile=/app/resources/fonts/0:text=你  好:fontcolor=0x0000FF80:fontsize=36:x=0:y=0[wt];[wt]hwupload_cuda=device=0,split=2[s0][s1];[s0]scale_npp=w=960:h=540[v0];[s1]scale_npp=w=720:h=480[v1]' -map '[v0]' -map 0:a -gpu 0 -c:v h264_nvenc -b:v 2500K -ac 1 -c:a aac -bsf:a aac_adtstoasc -strict -2 -y out1.mp4 -map '[v1]'  -gpu 0 -c:v h264_nvenc -b:v 2500K -ac 1 -c:a aac -bsf:a aac_adtstoasc -strict -2 -y out2.mp4
+```
+
+-map '[v0]' -map 0:a 表示选中filter输出v0和第一个输入文件的音频。这样在out1.mp4中就有音频和视频了。同样，由于out2.mp4没有选中音频，所以它就只有视频。
+
+
+
+
+
