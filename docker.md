@@ -98,5 +98,21 @@ docker cp jvm.options <containerID>:/usr/share/elasticsearch/config/jvm.options
 sudo docker update --memory "5g" --memory-swap "-1" <containerID>
 ```
 
+# 以root身份进入容器
 
+```shell
+sudo docker exec --user root  -it grafana /bin/bash
+```
+
+# 获取容器的信息
+
+```shell
+sudo docker inspect es01
+```
+
+# 查看容器的输出日志
+
+```shell
+sudo docker logs -t grafana
+```
 
