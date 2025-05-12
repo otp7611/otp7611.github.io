@@ -334,3 +334,15 @@ cricket::WebRtcVoiceEngine::WebRtcVoiceEngine media/engine/webrtc_voice_engine.c
  <- sct::mrtc::PeerConnection::onInit(  
 ```
 
+## 端口范围
+
+```
+cricket::UDPPort::UDPPort
+ <- cricket::UDPPort::Create
+ <- cricket::AllocationSequence::CreateUDPPorts p2p/client/basic_port_allocator.cc:1472
+ 
+rtc::BasicPacketSocketFactory::BindSocket p2p/base/basic_packet_socket_factory.cc:180
+ <- rtc::BasicPacketSocketFactory::CreateUdpSocket p2p/base/basic_packet_socket_factory.cc:46
+ <- cricket::AllocationSequence::Init p2p/client/basic_port_allocator.cc:1295
+```
+
