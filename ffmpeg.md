@@ -159,6 +159,12 @@ ffmpeg -t 60 -hwaccel_device 0 -gpu 0 -c:v h264_cuvid -i ~/share/keep/audioVideo
 
 -map '[v0]' -map 0:a 表示选中filter输出v0和第一个输入文件的音频。这样在out1.mp4中就有音频和视频了。同样，由于out2.mp4没有选中音频，所以它就只有视频。
 
+# 查看包或帧信息
+
+```
+ffprobe  -show_packets -show_entries packet=codec_type,dts_time,dts -of csv -i ~/share/keep/audioVideo.offset.mp4
+```
+
 
 
 
