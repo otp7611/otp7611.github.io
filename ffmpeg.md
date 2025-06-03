@@ -143,6 +143,14 @@ ffprobe -analyzeduration 20M a.mp4
 ffmpeg -h full
 ```
 
+## 显示指定编码器的参数
+
+```
+ffmpeg --help encoder=h264
+```
+
+
+
 # 生成音频波型视频
 
 ```
