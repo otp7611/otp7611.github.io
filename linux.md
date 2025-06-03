@@ -33,3 +33,10 @@ nsloopup <域名>
 sudo du -d 1 -h / --exclude=/run --exclude=/dev/shm --exclude=/media/workspace --exclude=/home --exclude=/proc --exclude=/snap
 ```
 
+# 配置apt源
+
+```shell
+sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+sed -i 's/security.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+```
+

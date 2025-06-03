@@ -209,6 +209,14 @@ docker start 带参数-i表示交互模式，如果docker start停止，则容�
 
 但是在实际中，java程序最大用量会比4G大，但是小于2x4G=8G
 
+### 增大虚拟内存
+
+https://www.elastic.co/docs/deploy-manage/deploy/self-managed/vm-max-map-count
+
+虚拟内存不够会出现ERROR: Elasticsearch died while starting up, with exit code 78
+
+方法是：sudo sysctl -w vm.max_map_count=262144
+
 ### 重置密码
 
 记下重置后的密码

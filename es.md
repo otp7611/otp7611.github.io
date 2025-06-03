@@ -136,3 +136,8 @@ ES的权限是由role作组合的。一个用户需要权限的话，就要去�
 配置为0后，它就自动会变成了green. 
 
 进入delete阶段，它不一定会立即删除，但是它最终会被删除。
+
+## ILM日志
+
+ILM的日志也是一个data stream, 名字是ilm-history-7,这种ES内部的data stream. 在这里可以查看ES的ILM管理的所有indice. 包括indice进入到什么状态，什么时候进入此状态的等等。
+
