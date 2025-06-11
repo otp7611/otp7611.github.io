@@ -40,3 +40,20 @@ sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 sed -i 's/security.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 ```
 
+# cron定时任务
+
+文件名不能有后缀。
+
+/etc/cron.d里面的文件可以不用可执行权限。
+
+```
+# m h dom mon dow user  command
+0 16 * * * root find /data/targetfolder/ -type f -mtime +14 [加此参数表示删除  -delete]
+```
+
+其它如/etc/cron.daily是需要的。你可以通过run-parts --test来检测一个任务文件是否有效。比如：run-parts --test /etc/cron.daily定时任务文件，要是可执行文件且不能有后缀，（最容易犯的错误是有后缀.sh, 合法的名字是不能有后缀）
+
+```
+内容就是shell脚本
+```
+

@@ -170,7 +170,13 @@ ffmpeg -t 60 -hwaccel_device 0 -gpu 0 -c:v h264_cuvid -i ~/share/keep/audioVideo
 # 查看包或帧信息
 
 ```
-ffprobe  -show_packets -show_entries packet=codec_type,dts_time,dts -of csv -i ~/share/keep/audioVideo.offset.mp4
+ffprobe  -show_packets -select_streams v:0 -show_entries packet=codec_type,dts_time,dts -of csv -i ~/share/keep/audioVideo.offset.mp4
+```
+
+# 生成gop为2秒的视频
+
+```
+ffmpeg -c:v h264_cuvid -i ~/share/keep/audioVideo.offset.mp4 -vf "fps=25" -c:v h264_nvenc -g 50 -b:v 2500K -ac 2 -c:a aac -bsf:a aac_adtstoasc -hls_playlist_type vod -hls_flags discont_start -strict -2 -y a.mp4
 ```
 
 
