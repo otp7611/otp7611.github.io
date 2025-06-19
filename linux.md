@@ -57,3 +57,18 @@ sed -i 's/security.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 内容就是shell脚本
 ```
 
+# 查看多文件里的日志信息
+
+```
+grep -arih aaaaa /logs/ | sort | less
+```
+
+-a 把处理二进制数据，否则遇到二进制数据grep 会停止
+
+-r 递归
+
+-i 忽略大小写
+
+-h 不显示匹配文件名
+
+-n  显示匹配号

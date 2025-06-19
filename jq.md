@@ -34,3 +34,9 @@ jq . <<<$(cat conf/mediamux.conf) > conf/mediamux.conf
 
 ```
 
+# json字符串数组转成命令行形式
+
+```
+echo '["ls","/etc"]' | jq -c .[] | xargs
+```
+
