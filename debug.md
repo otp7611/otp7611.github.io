@@ -84,3 +84,10 @@ massif-visualizer massif.out.xxxx
 左边这个图是一个堆叠图，占用内存大的堆在下面。依次往上叠加。叠的个数可以在窗口的stacked diagrams里选择。这里是最多叠10个。
 
 如果图中，图形为斜线，那就是有泄漏。
+
+## 监控子进程
+
+```
+valgrind --trace-children=yes --trace-children-skip=*/static/* --tool=massif <prog>
+```
+
