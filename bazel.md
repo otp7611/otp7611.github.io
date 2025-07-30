@@ -95,3 +95,12 @@ sct_dep("sct_mini/")
 
 ```
 
+# rules_cc
+
+bazel使用rules_cc来配置C|C++编译环境。
+
+可能通过环境变量来传参数。比如：--repo_env=CC=/llvm-project/instdir/bin/clang --repo_env=BAZEL_LINKLIBS=""
+
+参考https://github.com/otp7611/rules_cc-example
+
+支持的配置参数可以通过rules_cc/cc/private/toolchain/unix_cc_configure.bzl来确认。
