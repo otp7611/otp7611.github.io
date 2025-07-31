@@ -104,3 +104,11 @@ bazel使用rules_cc来配置C|C++编译环境。
 参考https://github.com/otp7611/rules_cc-example
 
 支持的配置参数可以通过rules_cc/cc/private/toolchain/unix_cc_configure.bzl来确认。
+
+# cc_toolchain_config
+
+对编译工具链的定义是通过cc_common.create_cc_toolchain_config_info
+
+cxx_builtin_include_directories不一定会进行include, 还需要手动通过flag进行添加features。
+
+参考tensorflow的local_config_cuda/crosstool/cc_toolchain_config.bzl
