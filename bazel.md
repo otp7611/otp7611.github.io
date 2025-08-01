@@ -95,3 +95,39 @@ sct_dep("sct_mini/")
 
 ```
 
+# rules_cc
+
+bazel使用rules_cc来配置C|C++编译环境。
+
+可能通过环境变量来传参数。比如：--repo_env=CC=/llvm-project/instdir/bin/clang --repo_env=BAZEL_LINKLIBS=""
+
+参考https://github.com/otp7611/rules_cc-example
+
+支持的配置参数可以通过rules_cc/cc/private/toolchain/unix_cc_configure.bzl来确认。
+
+# cc_toolchain_config
+
+对编译工具链的定义是通过cc_common.create_cc_toolchain_config_info
+
+cxx_builtin_include_directories不一定会进行include, 还需要手动通过flag进行添加features。
+
+参考tensorflow的local_config_cuda/crosstool/cc_toolchain_config.bzl
+
+# 备份项目与离线部署
+
+项目备份直接tar打包。
+
+下载的依赖库是在~/.cache/bazel/_bazel_chenc/cache/repos/v1/
+
+这个路径可以通过repository_cache参数指定。
+
+```
+--repository_cache=<a path> default: see description
+Specifies the cache location of the downloaded values obtained during the fetching of external repositories. An empty string as argument requests the cache to be disabled, otherwise the default of '<--output_user_root>/cache/repos/v1' is used
+
+--output_user_root=<path> default: see description
+The user-specific directory beneath which all build outputs are written; by default, this is a function of $USER, but by specifying a constant, build outputs can be shared between collaborating users.
+
+```
+
+output_user_root这个可以让每个项目使用不同的输出目录，互不干扰。

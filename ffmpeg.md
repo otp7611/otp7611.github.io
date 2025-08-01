@@ -53,6 +53,24 @@ hwupload_cuda=device=0表示把帧提交到硬件中，软件帧变为硬件帧�
 
 -hls_flags discont_start表示m3u8的第一个ts段要加上#EXT-X-DISCONTINUITY
 
+### ffmpeg使用scale_npp时GPU出现卡顿延时输出的问题
+
+https://developer.nvidia.com/blog/cuda-pro-tip-understand-fat-binaries-jit-caching/
+
+这是因为nvidia对cuda代码需要进行JIT编译，这个过程很慢且CPU是100％
+
+CUDA_CACHE_PATH指定JIT缓存目录，LINUX上默认是~/.nv/ComputeCache
+
+如果进程没有这个目录的权限，那么将每次都需要重新编译导到都很慢。如果有权限，就是只是第一次慢，后面都会使用这个缓存权限就很快了。
+
+测试方法
+
+```
+CUDA_CACHE_PATH=$PWD/myjit ffmpeg -t 60 -hwaccel_device 0 -gpu 0 -c:v h264_cuvid -i audioVideo.20s.mp4 -vf 'hwupload_cuda,scale_npp=w=960:h=540:format=nv12' -gpu 0 -c:v h264_nvenc -b:v 2500K -ac 1 -c:a aac -bsf:a aac_adtstoasc -strict -2 -y a.mp4
+```
+
+
+
 ## 软件转码
 
 ```

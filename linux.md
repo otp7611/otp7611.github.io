@@ -72,3 +72,15 @@ grep -arih aaaaa /logs/ | sort | less
 -h 不显示匹配文件名
 
 -n  显示匹配号
+
+# 查看进程的环境变量
+
+```
+cat /proc/5909/environ | while IFS= read -r -d '' v; do echo $v; done
+```
+
+```
+cat /proc/217632/environ | xargs -0 echo
+```
+
+IFS是read中用于控制分词的，-d表示read读到null后，read结束这次读。
