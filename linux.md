@@ -84,3 +84,22 @@ cat /proc/217632/environ | xargs -0 echo
 ```
 
 IFS是read中用于控制分词的，-d表示read读到null后，read结束这次读。
+
+# 限制进程内存使用
+
+配置cgroup
+
+```
+sudo mkdir /sys/fs/cgroup/learnconfig
+sudo sh -c 'echo 8000000000 >/sys/fs/cgroup/learnconfig/memory.max'
+cat /sys/fs/cgroup/learnconfig/memory.max
+```
+
+设置进程
+
+ ```
+ echo $$
+ sudo sh -c 'echo 3924 >/sys/fs/cgroup/learnconfig/cgroup.procs'
+ cat /proc/self/cgroup
+ ```
+
