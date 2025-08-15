@@ -128,6 +128,16 @@ clang++ -stdlib=libc++ -std=c++20 main.cpp
 
 
 
+## 系统的libc++库
+
+libc++.so.1
+
+```
+sudo apt install libc++-dev
+```
+
+
+
 # clang搜索路径
 
 如果-sysroot设置了，那么除了系统路径（比如-isystem，-internal-isystem, -internal-externc-isystem),都是相对于sysroot.

@@ -103,3 +103,9 @@ cat /sys/fs/cgroup/learnconfig/memory.max
  cat /proc/self/cgroup
  ```
 
+# 分割保存文件
+
+```
+split -b 1G /media/workspace/github/llvm-project-18.1.8.src/llvm-project-18.1.8-d1447217.tar llvm-project-18.1.8-d1447217.tar
+```
+
