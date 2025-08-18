@@ -172,3 +172,9 @@ GET /vtsdsindex/_search
 }
 ```
 
+# 强制datastream产生新的indice
+
+```
+POST /<your_alias_name>/_rollover
+```
+
