@@ -21,16 +21,28 @@ https://www.sublimetext.com/docs/file_patterns.html
 ```
 {
 	"vintage_start_in_command_mode": true,
-	"ignored_packages": ["",
-	],
-    "translate_tabs_to_spaces": true,
-    "word_wrap": "false",
+	"ignored_packages": [""],
+	"tab_size": 4,
+	"translate_tabs_to_spaces": true,
+ 	"detect_indentation": false,
+	"update_check": false,
+	"word_wrap": "false",
 	"binary_file_patterns": ["*.node", "*.jpg",],
 	"folder_exclude_patterns": [".git/", "//node_modules", "/home/data/mediaproj/testelectron/build"],
 	"font_size": 12,
 	"preview_on_click": true,
 }
 ```
+
+```
+[
+	{ "keys": ["ctrl+shift+s"], "command": "save_all" },	
+	{ "keys": ["ctrl+tab"], "command": "switch_file", "args": {"extensions": ["cpp", "cxx", "cc", "c", "hpp", "hxx", "hh", "h", "ipp", "inl", "m", "mm"]} },
+]
+
+```
+
+
 
 ## 路径配置File Patterns
 
