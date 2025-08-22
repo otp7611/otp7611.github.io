@@ -109,3 +109,23 @@ cat /sys/fs/cgroup/learnconfig/memory.max
 split -b 1G /media/workspace/github/llvm-project-18.1.8.src/llvm-project-18.1.8-d1447217.tar llvm-project-18.1.8-d1447217.tar
 ```
 
+# 管理应用输出工具rotatelogs
+
+```shell
+nohup bash -c 'python3 main.py -1 2>&1 | rotatelogs -l /data/node_python.%Y-%m-%d-%H_%M_%S 30M' >/dev/null 2>&1 &
+```
+
+# 文本处理
+
+```
+grep -rlI 'AAAA' . | xargs sed -i 's/AAAA/BBBB/g'
+```
+
+
+
+
+
+
+
+
+
