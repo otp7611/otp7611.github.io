@@ -12,5 +12,30 @@
 }
 ```
 
+# 基本sublime_text配置
 
+https://www.sublimetext.com/docs/projects.html
 
+https://www.sublimetext.com/docs/file_patterns.html
+
+```
+{
+	"vintage_start_in_command_mode": true,
+	"ignored_packages": ["",
+	],
+    "translate_tabs_to_spaces": true,
+    "word_wrap": "false",
+	"binary_file_patterns": ["*.node", "*.jpg",],
+	"folder_exclude_patterns": [".git/", "//node_modules", "/home/data/mediaproj/testelectron/build"],
+	"font_size": 12,
+	"preview_on_click": true,
+}
+```
+
+## 路径配置File Patterns
+
+相对是在路径中搜索模式
+
+以/开始是系统绝对路径
+
+以//开始是相对于the project root项目根目录
