@@ -126,7 +126,7 @@ ninja -C build install
 clang++ -stdlib=libc++ -std=c++20 main.cpp
 ```
 
-
+添加了参数-stdlib=libc++，就不需要加-lc++, -L/llvm-project-18/instdir/lib/x86_64-unknown-linux-gnu/。
 
 ## 系统的libc++库
 
