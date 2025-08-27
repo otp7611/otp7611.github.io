@@ -150,3 +150,15 @@ sudo apt install libc++-dev
 clang-17 -E -xc++ - -v
 ```
 
+# 配置在链接时使用静态库
+
+在默认情况下，是使用动态库。如果要强制用静态库，则需要
+
+```
+-Wl,-Bstatic -lhiredisd -Wl,-Bdynamic
+```
+
+即换成使用静态库后，再换回默认的动态库。
+
+
+
