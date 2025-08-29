@@ -32,11 +32,13 @@ Hi otp7611! You've successfully authenticated, but GitHub does not provide shell
 
 ~/.ssh/config
 
+ProxyCommand指用connect命令去连接http代理(-H)。connect默认是使用sock4/5的。所以一定要用参数-H
+
 ```
 Host github.com
     Hostname ssh.github.com
     Port 443
-    User git
+    ProxyCommand connect -H 127.0.0.1:10077 %h %p
 ```
 
 ```
