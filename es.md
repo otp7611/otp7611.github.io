@@ -141,3 +141,40 @@ ES的权限是由role作组合的。一个用户需要权限的话，就要去�
 
 ILM的日志也是一个data stream, 名字是ilm-history-7,这种ES内部的data stream. 在这里可以查看ES的ILM管理的所有indice. 包括indice进入到什么状态，什么时候进入此状态的等等。
 
+# 查询数据
+
+```
+GET /vtsdsindex/_search
+{
+  "size": 50,
+  "query": {
+    "bool": { 
+      "must": [
+        { 
+          "match": { 
+            "source_id": "this is id" 
+          }
+        }
+      ],
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now-5h",
+              "lte": "now",
+              "format": "strict_date_optional_time_nanos"
+            }
+          }
+        }
+      ]
+    }    
+  }
+}
+```
+
+# 强制datastream产生新的indice
+
+```
+POST /<your_alias_name>/_rollover
+```
+

@@ -84,3 +84,81 @@ https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-fpch-
 
 目的就是为了避免，未修改文件，只是touch更新了一下时候却导致重新编译的问题。
 
+# 编译clang
+
+在https://releases.llvm.org/download.html选择需要的版本。
+
+在https://releases.llvm.org/18.1.8/projects/libcxx/docs/index.html查看版本状态。
+
+在https://releases.llvm.org/18.1.8/projects/libcxx/docs/Status/Cxx20.html查看clang实现标准的状态。经查std::format在14 版本开始实现了。
+
+## 编译libc++18
+
+下载对应版本源码https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/llvm-project-18.1.8.src.tar.xz
+
+https://releases.llvm.org/18.1.8/projects/libcxx/docs/BuildingLibcxx.html
+
+```
+#!/usr/bin/env bash
+#set -x
+
+basepath=$(cd `dirname $0`; pwd)
+cd ${basepath}
+
+mkdir -p build
+cmake -G Ninja -S llvm -B build -DCMAKE_INSTALL_PREFIX=${basepath}/instdir -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;lld" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind"
+ninja -C build -j5 runtimes
+ninja -C build install-runtimes
+```
+
+如果没有-j5就会编译进程数等于你的cpu核数。
+
+如果需要同时安装clang,则用
+
+```
+ninja -C build -j5
+ninja -C build install
+```
+
+## 使用libc++
+
+```
+clang++ -stdlib=libc++ -std=c++20 main.cpp
+```
+
+添加了参数-stdlib=libc++，就不需要加-lc++, -L/llvm-project-18/instdir/lib/x86_64-unknown-linux-gnu/。
+
+## 系统的libc++库
+
+libc++.so.1
+
+```
+sudo apt install libc++-dev
+```
+
+
+
+# clang搜索路径
+
+如果-sysroot设置了，那么除了系统路径（比如-isystem，-internal-isystem, -internal-externc-isystem),都是相对于sysroot.
+
+举例，-sysroot=/path/sysroot, -I/usr/include 那么实际的生效的路径为/path/sysroot/usr/include
+
+## 查看默认路径
+
+```
+clang-17 -E -xc++ - -v
+```
+
+# 配置在链接时使用静态库
+
+在默认情况下，是使用动态库。如果要强制用静态库，则需要
+
+```
+-Wl,-Bstatic -lhiredisd -Wl,-Bdynamic
+```
+
+即换成使用静态库后，再换回默认的动态库。
+
+
+

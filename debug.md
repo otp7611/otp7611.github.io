@@ -91,3 +91,13 @@ massif-visualizer massif.out.xxxx
 valgrind --trace-children=yes --trace-children-skip=*/static/* --tool=massif <prog>
 ```
 
+# web调试
+
+https://developer.chrome.com/docs/devtools/remote-debugging
+
+手机要打开USB调试。
+
+```
+chrome://inspect/#devices
+```
+

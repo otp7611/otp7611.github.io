@@ -84,3 +84,48 @@ cat /proc/217632/environ | xargs -0 echo
 ```
 
 IFS是read中用于控制分词的，-d表示read读到null后，read结束这次读。
+
+# 限制进程内存使用
+
+配置cgroup
+
+```
+sudo mkdir /sys/fs/cgroup/learnconfig
+sudo sh -c 'echo 8000000000 >/sys/fs/cgroup/learnconfig/memory.max'
+cat /sys/fs/cgroup/learnconfig/memory.max
+```
+
+设置进程
+
+ ```
+ echo $$
+ sudo sh -c 'echo 3924 >/sys/fs/cgroup/learnconfig/cgroup.procs'
+ cat /proc/self/cgroup
+ ```
+
+# 分割保存文件
+
+```
+split -b 1G /media/workspace/github/llvm-project-18.1.8.src/llvm-project-18.1.8-d1447217.tar llvm-project-18.1.8-d1447217.tar
+```
+
+# 管理应用输出工具rotatelogs
+
+```shell
+nohup bash -c 'python3 main.py -1 2>&1 | rotatelogs -l /data/node_python.%Y-%m-%d-%H_%M_%S 30M' >/dev/null 2>&1 &
+```
+
+# 文本处理
+
+```
+grep -rlI 'AAAA' . | xargs sed -i 's/AAAA/BBBB/g'
+```
+
+
+
+
+
+
+
+
+

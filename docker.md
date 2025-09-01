@@ -34,7 +34,7 @@ sudo docker volume create grafana-storage
 sudo docker run -dit --name grafana -e TERM=screen-256color -p 6800:3000 -v /data/video/grafana/sharedata:/data -v grafana-storage:/var/lib/grafana  grafana/grafana-enterprise:11.5.2-ubuntu
 ```
 
-## 使用compose
+## 使用docker-compose.yaml
 
 docker-compose.yaml
 
@@ -61,8 +61,59 @@ volumes:
 ```
 
 ```
-docker compose up -d
+services:
+  grafana:
+    image: grafana/grafana-enterprise:11.5.2-ubuntu
+    container_name: grafana
+    entrypoint: /bin/bash
+    command: []
+    stdin_open: true
+    tty: true
+    restart: no
+    # pid: host
+    privileged: true
+    cgroup: host
+    deploy:
+        resources:
+            limits:
+                memory: 5g
+    volumes:
+      - '/media/workspace/builder_data:/data'
+    environment:
+      - HTTPS_PROXY=
+      - https_proxy=
+      - http_proxy=
+      - HTTP_PROXY=
+      - ALL_PROXY=
+      - all_proxy=
+volumes:
+  imaged-storage: {}
 ```
+
+entrypoint command，command是命令的参数。
+
+stdin_open tty使用伪终端。如果不使用这两个参数，bash启动后就退出了。
+
+pid参数控制容器内的pid空间是否与主机空间一致。如果一致，如容器停止后会容器内的程序不会停止，他会被主机的1号进程接管。
+
+privileged表示容器内用户权限，如果为true就不用有docker容器特定的权限限制。
+
+cgroup表示容器内与主机一致，如果没有则容器内不能创建cgroup.
+
+deploy控制部署上的约束。
+
+## 常用命令
+
+```
+docker compose up -d
+docker exec -it dockername /bin/bash
+docker compose stop
+docker compose rm
+```
+
+docker compose操作的是docker-compose.yaml里描述的所有服务。
+
+-d表示在后台跑，否则为前台。如果ctrl-c则所有容器服务停止。
 
 # 启动已经退出的容器
 
