@@ -123,6 +123,19 @@ grep -rlI 'AAAA' . | xargs sed -i 's/AAAA/BBBB/g'
 
 
 
+# vim配置
+
+```
+~/.vimrc 
+filetype plugin indent on
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set mouse=
+set ttymouse=
+
+```
+
 
 
 

@@ -46,7 +46,7 @@ node的插件编译系统默认使用Release模式，所以在bazel使用clang-c
 
 ### 环境变量
 
-PYTHON
+PYTHON这个变量一定在高级系统设置中设置，值为E:\Python\python3.exe。不然node-gyp找不到。
 
 BAZEL_LLVM bazel不要使用vs中的llvm，要去官网下载。不然只能编译出x64的obj文件，会与x86的obj文件冲突，不能打包成lib库。
 
