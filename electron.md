@@ -54,5 +54,13 @@ BAZEL_LLVM bazel不要使用vs中的llvm，要去官网下载。不然只能编�
 export BAZEL_LLVM="E:\program\clang+llvm-18.1.8-x86_64-pc-windows-msvc"
 ```
 
+# 调试
+
+windows崩溃输出的dump在%APPDATA%\应用名\Crashpad
+
+```
+C:\Users\<username>\AppData\Roaming\vncdaemon\Crashpad
+```
+
 
 
