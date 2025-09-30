@@ -105,6 +105,44 @@ bazel使用rules_cc来配置C|C++编译环境。
 
 支持的配置参数可以通过rules_cc/cc/private/toolchain/unix_cc_configure.bzl来确认。
 
+## cc_configure.bzl
+
+rules_cc/cc/private/toolchain/cc_configure.bzl
+
+调用cc_configure()后生成cc_autoconf_toolchains(name = "local_config_cc_toolchains")，cc_autoconf(name = "local_config_cc")
+
+cc_autoconf_impl()自动配置编译器。
+
+get_cpu_value()检测系统k8是linux, x64_windows是windows, 这里msys也是用cpu为x64-windows
+
+load(":windows_cc_configure.bzl", "configure_windows_toolchain")配置windows编译器信息
+
+使用"@rules_cc//cc/private/toolchain:BUILD.windows.tpl"这个模块来配置local_config_cc。
+
+## repository_rule
+
+environ,repository_ctx.getenv如果环境变量变化，这个依赖的仓库会被更新。
+
+Specifies additional environment variables to be available only for repository rules。这个环境变量是通过bazel命令参数
+
+```
+--repo_env=
+```
+
+来传递的，且只对repository_rule规则有效。
+
+--action_env=BAZEL_SH=/bin/bash  action_env配置的变量在action中有效，比如genrule，sh_binary
+
+
+
+
+
+
+
+
+
+
+
 # cc_toolchain_config
 
 对编译工具链的定义是通过cc_common.create_cc_toolchain_config_info
@@ -131,3 +169,38 @@ The user-specific directory beneath which all build outputs are written; by defa
 ```
 
 output_user_root这个可以让每个项目使用不同的输出目录，互不干扰。
+
+# 参数bazel命令参数输入配置
+
+命令参数转化为flag, 各种flag组合成config_setting, 最后由select去选中满足所有flag的config_setting.
+
+# rule()
+
+rule的实现函数返回的是provider列表，provider的类型是不可重复的。
+
+# toolchain
+
+https://bazel.google.cn/versions/8.4.0/extending/toolchains
+
+toolchain的选择是由platform constraints控制的。它不是直到从命令行参数传递的选择。每个rule()都可以通过参数toolchains指定多个toolchain. 每个toolchain可以通过select去指向不同具体的配置。
+
+最后通过register_toolchains或--extra_toolchains把定义的toolchain()注册到bazel中。--platforms=//my_pkg:my_target_platform去选择platform constraints。
+
+# bazel使用的工作目录与依赖库
+
+bazel使用的工作目录可以通过--output_user_root来指定。如果项目中使用的依赖库是一样的（如果是链接文件生成的依赖库，则链接文件指向的目录也是一样），那么，确实可以通过复制“工作目录”来把数据迁移到另一台电脑上。但是，如果依赖库不一样，最常见的是就是链接文件指向的目录不一样。这个就会导致bazel把这个工程生成的hash值不一样，导致迁移到另一台电脑上出现需要重新下载的情况。
+
+如果重新下载很慢，可以通过复制现有的下载的文件。举个例子，如果下载skia依赖库spirv_cross很慢，就需要复制
+
+```
+<工作目录>/<正常编译项目录的HASH值>/external/skia++dep_extension+spirv_cross
+<工作目录>/<正常编译项目录的HASH值>/external/@skia++dep_extension+spirv_cross.marker
+```
+
+把这两个复制到
+
+```
+<工作目录>/<新编码项目录的HASH值>/external/
+```
+
+。
