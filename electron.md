@@ -62,5 +62,9 @@ windows崩溃输出的dump在%APPDATA%\应用名\Crashpad
 C:\Users\<username>\AppData\Roaming\vncdaemon\Crashpad
 ```
 
+```
+ gdb --args ./node_modules/electron/dist/electron .
+```
+
 
 
