@@ -46,3 +46,17 @@ $ ssh -T git@github.com
 Hi otp7611! You've successfully authenticated, but GitHub does not provide shell access.
 ```
 
+# 替换访问域名
+
+```
+[url "https://bgithub.xyz"]
+    insteadOf = https://github.com
+
+```
+
+# 同步子模块
+
+```
+git submodule update --init --recursive
+```
+

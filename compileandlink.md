@@ -1,6 +1,6 @@
 编译和链接
 
-# 有用的编译期检查选项
+# 编译期检查选项
 
 ```
 -Werror=exceptions
@@ -21,6 +21,20 @@ error: using the result of an assignment as a condition without parentheses [-We
 ```
 
 如果你真希望这么做，就用括号括起来。
+
+## 打开所有检查
+
+```
+-Wall
+```
+
+## 关闭所有检查
+
+```
+-Wno-everything
+```
+
+
 
 # 预编译头文件
 
@@ -159,6 +173,12 @@ clang-17 -E -xc++ - -v
 ```
 
 即换成使用静态库后，再换回默认的动态库。
+
+# clang查看预定义宏
+
+```
+clang++ -dM -E -x c /dev/null
+```
 
 
 

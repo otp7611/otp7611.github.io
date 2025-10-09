@@ -51,3 +51,16 @@ https://www.sublimetext.com/docs/file_patterns.html
 以/开始是系统绝对路径
 
 以//开始是相对于the project root项目根目录
+
+# 列选择
+
+```
+    { "keys": ["alt+left"], "command": "move", "args": {"by": "subwords", "forward": false} },
+    { "keys": ["alt+right"], "command": "move", "args": {"by": "subword_ends", "forward": true} },
+    { "keys": ["alt+shift+left"], "command": "move", "args": {"by": "subwords", "forward": false, "extend": true} },
+    { "keys": ["alt+shift+right"], "command": "move", "args": {"by": "subword_ends", "forward": true, "extend": true} },
+    { "keys": ["alt+shift+up"], "command": "select_lines", "args": {"forward": false} },
+    { "keys": ["alt+shift+down"], "command": "select_lines", "args": {"forward": true} },
+```
+
+alt+shift+方向

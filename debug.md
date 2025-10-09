@@ -101,3 +101,19 @@ https://developer.chrome.com/docs/devtools/remote-debugging
 chrome://inspect/#devices
 ```
 
+# 链接库中的符号
+
+## windows
+
+```
+'/c/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.40.33807/bin/Hostx64/x86/dumpbin.exe' //SYMBOLS //IMPORTS ./build/Release/vncdaemon_addon.node
+```
+
+msys在运行时会先把命令中'/c/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.40.33807/bin/Hostx64/x86/dumpbin.exe'的/释放成\,如果是绝对路径，就会把第一个变成驱动区号。就是'c:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.40.33807\bin\Hostx64\x86\dumpbin.exe' 如果以以//开始，就变成/不进行路径变换，也就是//SYMBOLS会变成/SYMBOLS。最后如果路径中有冒号，就会变成分号，再进行路径变换。
+
+## linux
+
+```
+nm -A instdir/lib/libcrypto.a instdir/lib/libssl.a | grep -e ' T ' | awk 'BEGIN {print "#pragma once" } { print "#define " $3 " pr_"$3 }' >include/openssl/openssl_prefix_symbols.h
+```
+

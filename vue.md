@@ -50,3 +50,7 @@ npm run build会执行build-only，build-site
 npm run build-only 会执行vite build
 
 npm run  build-site会执行vite build --config vite.config.site.ts
+
+# import路径配置
+
+tsconfig.json中的paths配置，与vite.config.js中的resolve.alias配置是相互独立的。tsconfig.json是给tsc用的，vite.config.js是给vite打包器用的。路径配置在这两个文件中都要有相应的配置。vite并不依赖于tsc。
