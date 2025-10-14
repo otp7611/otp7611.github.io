@@ -17,6 +17,34 @@ That’s the nature of intelligence: it is the ability to efficiently leverage t
 tion at your disposal in order to produce successful behavior in the face of an uncer-
 tain, ever-changing future. 
 
+A `Sequential` model is appropriate for **a plain stack of layers** where each layer has **exactly one input tensor and one output tensor**.
+
+RMSProp (Root Mean Square Propagation) is an adaptive learning rate optimization algorithm
+
+Sparse Categorical Crossentropy is a loss function  commonly used in multi-class classification problems in machine learning and deep learning and is particularly used when dealing with a large  number of categories. It is very similar to [Categorical Crossentropy](https://www.geeksforgeeks.org/deep-learning/categorical-cross-entropy-in-multi-class-classification/) but with one important difference i.e the true class labels are  provided as integers (category indices), not as one-hot encoded vectors.
+
+This metric is used to measure how often the predictions made by the  model are same as the true labels. If the y_pred is the predicted label  and y_true is the true label of the instance, the Accuracy class  measures the number of times y_pred = y_true.
+
+The *numpy.argmax* function returns the indices of the maximum values along a specified  axis in an array. This is useful for finding the position of the largest element in an array.
+
+https://www.w3resource.com/python-exercises/numpy/basic/numpy-basic-exercise-34.php
+
+```
+We allow the addition of matrix and a vector, yielding another matrix
+C=A+b
+where C_i,j=A_i,j+b_j. In other words, the vector b is added to each row of the matrix. This shorthand eliminates the need to define a matrix with b copied into each row before doing the addition. This implicit copying of b to many locations is called broadcasting.
+```
+
+
+
+## keras本地数据集缓存路径
+
+```
+~/.keras/datasets
+```
+
+
+
 # 基本网络
 
 DenseNet(A densely connected network )稠密连接网络
@@ -79,6 +107,8 @@ crossentropy:   -log(p), 如果p越小（不确定，那么出错可能性大，
 ![](static/deep-learning.png)
 
 # keras
+
+shape就是下标的索引信息。
 
 ```
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
@@ -145,6 +175,10 @@ W输入是2维，输出是1维
 
 B输入输出都是1维。
 
+tf.random.uniform((2, 2)这里表示生成一个2x2的数组，数据中每个元素都是均匀分布。
+
+
+
 ## 梯度(gradient),导数（derivative）
 
 一个函数在某一点x0处的导数与当前输入是否为x0无关。导数是函数固有属性，与输入无关，即使当前输入为x2了，在x0处的导数还是同样的值。
@@ -170,6 +204,14 @@ tape.gradient(result, input_var)这里就是使用梯度了。
 
 layer输入张量，输出也是张量，layer是对张量的变换。layer的状态就是knowledge,这个系统学习到的知识。比如weight和b这些参数。
 
+每层的输入是一个张量数组，第一维信息始终是张量的个数。
+
+### keras.layers.Conv2D
+
+第一个参数是filters可能理解为提取的特征数
+
+第三个参数是kernel_size核的窗口大小
+
 ## tf.ones
 
 ```
@@ -191,6 +233,10 @@ tf.Tensor(6.0, shape=(), dtype=float32)
 ```
 
 shape为空，表示这是一个标量6.
+
+## Sequential
+
+序列模型适合单个输入张量单输出张量层的级联。
 
 # python的with语句
 
