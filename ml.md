@@ -35,7 +35,7 @@ C=A+b
 where C_i,j=A_i,j+b_j. In other words, the vector b is added to each row of the matrix. This shorthand eliminates the need to define a matrix with b copied into each row before doing the addition. This implicit copying of b to many locations is called broadcasting.
 ```
 
-
+在设计np.array尽量保持同一行是一个样本，包括label, 所以在创建label数组是，是n行1列的。即np.zeros((num_samples_per_class, 1), dtype="float32")
 
 ## keras本地数据集缓存路径
 
@@ -150,6 +150,14 @@ batch_size表示处理128个样本后，更新一次参数。更新参数和计�
 epochs表示对所有有的输入样本，每个样本都输入5次。所有样本处理一次表示一次迭代。
 
 ![](static/mini-batch.png)
+
+## shape
+
+shape=()表示标量
+
+shape=(2,)表示向量，2维
+
+shape=(2,3)表示矩阵，2行3列，2x3=6即6维。
 
 ## 维度
 
