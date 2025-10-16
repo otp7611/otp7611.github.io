@@ -246,6 +246,16 @@ shape为空，表示这是一个标量6.
 
 序列模型适合单个输入张量单输出张量层的级联。
 
+## numpy.mean(axis=)
+
+axis可以理解为对指定维度进行平均。比如axis=0表示沿第一索引进行平均，平均后，第一索引就不存在了。axis=1表示沿着第二索引进行平均，平均后，第二索引就不存在了。
+
+## model.evaluate
+
+返回的参数对应model.compile()中loss，metrics参数。
+
+
+
 # python的with语句
 
 python对象中的
