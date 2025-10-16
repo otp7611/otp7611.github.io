@@ -98,8 +98,8 @@ cat /sys/fs/cgroup/learnconfig/memory.max
 设置进程
 
  ```
- echo $$
- sudo sh -c 'echo 3924 >/sys/fs/cgroup/learnconfig/cgroup.procs'
+ SHELLPID=`echo $$`
+ sudo sh -c "echo $SHELLPID >/sys/fs/cgroup/learnconfig/cgroup.procs"
  cat /proc/self/cgroup
  ```
 

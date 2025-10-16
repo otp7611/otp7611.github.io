@@ -161,6 +161,17 @@ shape=(2,3)表示矩阵，2行3列，2x3=6即6维。
 
 ## 维度
 
+样本可以用一个数组表示，样本的维度等于数组各级索引的乘积，比如，一个样本
+
+```
+picture[width][height]的维度是width*height
+layers.Dense(96, activation="relu")
+```
+
+为避免冲突，尽量用数组第一级索引，第二级索引这样去描述。
+
+layers.Dense中第一个参数对应是输出维度，在上面的例子中，肯定是有width*height大于96的，也就是说，整体维度是下降的。
+
 一个样本的每一个维度对应这个样本的属性。一个彩色相素有5个维度，(x, y, r, g, b),如果这个相素是时间相关的，那就是6维了(t, x, y, r, g, b).
 
 ```
@@ -254,7 +265,15 @@ axis可以理解为对指定维度进行平均。比如axis=0表示沿第一索�
 
 返回的参数对应model.compile()中loss，metrics参数。
 
+## numpy中的axis
 
+<img src="static/axis.png" style="zoom:50%;" />
+
+## weight regularization
+
+Large weights in a neural network are a sign of a more complex network that has overfit the training data.
+
+Generally, we refer to this model as having a large variance and a small bias.
 
 # python的with语句
 
