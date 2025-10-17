@@ -275,6 +275,29 @@ Large weights in a neural network are a sign of a more complex network that has 
 
 Generally, we refer to this model as having a large variance and a small bias.
 
+## 多输入多输出模型
+
+https://keras.io/guides/training_with_built_in_methods/#passing-data-to-multiinput-multioutput-models
+
+如果模型有多个输出，则可以对应有不同的loss函数，如果没有或值为None表示，这个对应的输出不会去更新模型参数。当多个输出定义了loss函数，由这多个输出去更新参数时，可以通过loss_weights来控制每个输出对更新模型参数产生的效果。
+
+## layer output
+
+```
+features = model.layers[4].output
+difficulty = layers.Dense(3, activation="softmax", name="difficulty")(features)
+```
+
+每一层的输出，可以作为下一层的输入。
+
+## keras.metrics.SparseCategoricalAccuracy
+
+```
+acc = np.dot(sample_weight, np.equal(y_true, np.argmax(y_pred, axis=1))
+```
+
+np.argmax表示取最大值的下标。`sparse categorical accuracy`: an idempotent operation that simply divides `total` by `count`.
+
 # python的with语句
 
 python对象中的
