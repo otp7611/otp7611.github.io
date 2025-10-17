@@ -119,6 +119,7 @@ nohup bash -c 'python3 main.py -1 2>&1 | rotatelogs -l /data/node_python.%Y-%m-%
 
 ```
 grep -rlI 'AAAA' . | xargs sed -i 's/AAAA/BBBB/g'
+grep ts c.m3u8  | sed  's/^/file /g' > c.filelist
 ```
 
 
@@ -136,7 +137,7 @@ set ttymouse=
 
 ```
 
-
+vim按百分比跳转。按5，0，％，就会跳到50％的位置。
 
 
 
