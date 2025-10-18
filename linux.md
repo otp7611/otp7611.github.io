@@ -118,7 +118,7 @@ nohup bash -c 'python3 main.py -1 2>&1 | rotatelogs -l /data/node_python.%Y-%m-%
 # 文本处理
 
 ```
-grep -rlI 'AAAA' . | xargs sed -i 's/AAAA/BBBB/g'
+grep -rlIi 'AAAA' . | xargs sed -i 's/AAAA/BBBB/g'
 grep ts c.m3u8  | sed  's/^/file /g' > c.filelist
 ```
 
