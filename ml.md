@@ -298,6 +298,21 @@ acc = np.dot(sample_weight, np.equal(y_true, np.argmax(y_pred, axis=1))
 
 np.argmax表示取最大值的下标。`sparse categorical accuracy`: an idempotent operation that simply divides `total` by `count`.
 
+## tf.keras.losses.sparse_categorical_crossentropy                                    
+
+```
+y_true = [1, 2]
+y_pred = [[0.05, 0.95, 0], [0.1, 0.8, 0.1]]
+loss = keras.losses.sparse_categorical_crossentropy(y_true, y_pred)
+assert loss.shape == (2,)
+loss
+
+```
+
+y_true是下标，y_true中的1表示y_pred中在[0.05, 0.95, 0]，0.95应该是最大的，实际是也是最大的，所有这个预测值是对的。按这种思路去分析第二个样本，第二个样本的预测值就是错的，有偏差。有个预值值都 会对应有个损失值。
+
+带sparse和不带的区域在于，不带sparse使用的one-hot编码，带的是使用整数下标。
+
 # python的with语句
 
 python对象中的
