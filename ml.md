@@ -225,11 +225,35 @@ layer输入张量，输出也是张量，layer是对张量的变换。layer的�
 
 每层的输入是一个张量数组，第一维信息始终是张量的个数。
 
-### keras.layers.Conv2D
+## keras.layers.Conv2D
 
 第一个参数是filters可能理解为提取的特征数
 
 第三个参数是kernel_size核的窗口大小
+
+举例
+
+```
+layers.Conv2D(64, 3, activation="relu", padding="same")
+```
+
+如果没有padding那么，如果原来是(x, y)输出的shape就是(x-2, y-2)因为在3x3的卷积核在四边位置是无法进行的，上下左右各减1.加上padding="same"就解决这个问题了。
+
+```
+layers.Conv2D(64, 3, strides=2, activation="relu", padding="same")
+```
+
+strides=2指卷积核以2为步长进行迭代，就会导致shape由(x,y)变成(x/2, y/2)
+
+## layers.MaxPooling2D
+
+```
+layers.MaxPooling2D(pool_size=2)
+```
+
+表示从2x2的像素窗口中挑取最大值，pool_size=2会导致shape由(x,y)变成(x/2, y/2)
+
+
 
 ## tf.ones
 
@@ -312,6 +336,8 @@ loss
 y_true是下标，y_true中的1表示y_pred中在[0.05, 0.95, 0]，0.95应该是最大的，实际是也是最大的，所有这个预测值是对的。按这种思路去分析第二个样本，第二个样本的预测值就是错的，有偏差。有个预值值都 会对应有个损失值。
 
 带sparse和不带的区域在于，不带sparse使用的one-hot编码，带的是使用整数下标。
+
+
 
 # python的with语句
 
