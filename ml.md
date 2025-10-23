@@ -106,6 +106,22 @@ crossentropy:   -log(p), 如果p越小（不确定，那么出错可能性大，
 
 ![](static/deep-learning.png)
 
+# 编码
+
+## one hot
+
+0001 0010 0100 1000表示4类
+
+## binary
+
+00 01 10 11表示4类
+
+ascii码就是binary编码
+
+## multi hot
+
+是one hot的合并，比如0011表示同时有第一类0001和第二类0010
+
 # keras
 
 shape就是下标的索引信息。

@@ -139,6 +139,76 @@ set ttymouse=
 
 vim按百分比跳转。按5，0，％，就会跳到50％的位置。
 
+# core
+
+参考https://www.baeldung.com/linux/apport-enable-disable
+
+linux程序崩溃就会被系统内核捕捉，并读取/proc/sys/kernel/core_pattern中配置，如果是配置
+
+```
+core
+```
+
+则会在进程工作目录下生成
+
+```
+core.<pid>
+```
+
+如果是
+
+```
+|/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -- %E
+```
+
+则系统会把core数据流发给/usr/share/apport/apport这个程序处理。
+
+这个过程可以通过/etc/init.d/apport来确认。
+
+/usr/share/apport/apport这个文件在ubuntu中的软件包: apport (2.20.11-0ubuntu82.10) https://packages.ubuntu.com/jammy/apport
+
+如果是使用了apport那么应用生成的core在/var/crash
+
+日志在
+
+```
+/var/log/apport.log
+```
+
+## 查看apport服务状态
+
+```
+sudo systemctl status apport.service
+```
+
+## 禁用apport
+
+/etc/default/apport
+
+```
+# set this to 0 to disable apport, or to 1 to enable it
+# you can temporarily override this with
+# sudo service apport start force_start=1
+enabled=0
+```
+
+# bash脚本
+
+## 脚本中的|| true
+
+In Bash, the *|| true* construct is used to ensure that a command does not cause the script to exit when it fails. This is particularly useful when the *set -e* option is enabled, which makes the script exit immediately if any command returns a non-zero exit status.
+
+```
+#!/bin/bash
+
+set -e # Exit on any command failure
+
+# This command fails, but the script continues because of '|| true'
+ls nonexistent_file || true
+
+echo "Script continues despite the previous command failing."
+```
+
 
 
 
