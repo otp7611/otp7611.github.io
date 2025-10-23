@@ -167,7 +167,11 @@ core.<pid>
 
 /usr/share/apport/apport这个文件在ubuntu中的软件包: apport (2.20.11-0ubuntu82.10) https://packages.ubuntu.com/jammy/apport
 
-如果是使用了apport那么应用生成的core在/var/crash
+如果是使用了apport那么应用生成的core在
+
+/var/crash 如果是deb包中程序
+
+/var/lib/apport/coredump 如果不是.
 
 日志在
 
