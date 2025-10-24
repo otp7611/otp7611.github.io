@@ -193,6 +193,8 @@ sudo docker run --name es01 --net elastic -p 9200:9200 -it -m 5GB docker.elastic
 sudo docker start es01
 ```
 
+在/etc/sysctl.conf写入vm.max_map_count=262144可以在机器启动后依然有效。
+
 docker start 带参数-i表示交互模式，如果docker start停止，则容器停止。如果不带，则会在后台启动这个容器。
 
 ### 限制es程序java虚拟机内存使用量
