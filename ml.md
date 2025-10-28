@@ -37,6 +37,8 @@ where C_i,j=A_i,j+b_j. In other words, the vector b is added to each row of the 
 
 在设计np.array尽量保持同一行是一个样本，包括label, 所以在创建label数组是，是n行1列的。即np.zeros((num_samples_per_class, 1), dtype="float32")
 
+variational autoencoders (VAEs)变分编码器 and generative adversarial networks(GANs)生成对抗网络. 
+
 ## keras本地数据集缓存路径
 
 ```

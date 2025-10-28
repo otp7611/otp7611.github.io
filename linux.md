@@ -57,6 +57,16 @@ sed -i 's/security.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 内容就是shell脚本
 ```
 
+```
+* * * * * root top -b -n 1 >> /tmp/log.test.$(date +\%Y\%m\%d) 2>&1 
+```
+
+crontab 中 `%` 是特殊字符，需要用 `\` 转义（写成 `\%`），否则会被解析为换行符。
+
+若任务一天内执行多次（如每小时），但仍想每天合并到一个日志文件，上述命令同样适用（同一天的 date 输出相同，会追加到同一个文件）。
+
+注意添加到/etc/cron.d/文件权限644,和所有者。
+
 # 查看多文件里的日志信息
 
 ```
