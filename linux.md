@@ -225,5 +225,55 @@ echo "Script continues despite the previous command failing."
 
 
 
+# 查看系统日志
 
+```
+查看最后的启动时间who -b
+查看最后的启动时间last reboot | head -1
+查看日志
+journalctl --since "2025-10-30 00:00:00"
+
+
+```
+
+确认出错设备
+
+```
+ lspci -nn | grep 00:02
+00:02.0 PCI bridge [0604]: Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D PCI Express Root Port 2 [8086:6f04] (rev 01)
+
+```
+
+
+
+```
+-- Boot b7b80de5a2fa4c26b772b793688591cf --
+表示系统启动开始。
+```
+
+pci故障
+
+```
+Oct 30 13:20:25 pc kernel: pcieport 0000:00:02.0: AER: device recovery failed
+Oct 30 13:20:25 pc kernel: pcieport 0000:00:02.0: AER: Multiple Uncorrected (Fatal) error message received from 0000:00:02.0
+Oct 30 13:20:25 pc kernel: pcieport 0000:00:02.0: PCIe Bus Error: severity=Uncorrected (Fatal), type=Transaction Layer, (Requester ID)
+Oct 30 13:20:25 pc kernel: pcieport 0000:00:02.0:   device [8086:6f04] error status/mask=00004020/00000000
+Oct 30 13:20:25 pc kernel: pcieport 0000:00:02.0:    [ 5] SDES                  
+Oct 30 13:20:25 pc kernel: pcieport 0000:00:02.0:    [14] CmpltTO                (First)
+Oct 30 13:20:25 pc kernel: nvidia 0000:03:00.0: AER: can't recover (no error_detected callback)
+Oct 30 13:20:25 pc kernel: snd_hda_intel 0000:03:00.1: AER: can't recover (no error_detected callback)
+
+```
+
+GPU故障
+
+```
+Oct 30 09:49:36 pc kernel: NVRM: GPU at PCI:0000:03:00: GPU-44ec53bd-277c-984f-fa9f-cded30fbfd5d
+Oct 30 09:49:36 pc kernel: NVRM: Xid (PCI:0000:03:00): 79, pid='<unknown>', name=<unknown>, GPU has fallen off the bus.
+Oct 30 09:49:36 pc kernel: NVRM: GPU 0000:03:00.0: GPU has fallen off the bus.
+Oct 30 09:49:36 pc kernel: NVRM: A GPU crash dump has been created. If possible, please run
+                           NVRM: nvidia-bug-report.sh as root to collect this data before
+                           NVRM: the NVIDIA kernel module is unloaded.
+
+```
 
