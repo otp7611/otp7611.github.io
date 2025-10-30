@@ -25,21 +25,21 @@ C(CConnection::RFBSTATE_PROTOCOL_VERSION) -> S(SConnection::RFBSTATE_PROTOCOL_VE
 
 客户端日志Using RFB protocol version可以查看协商后的版本。当前应该使用版本是3.8. 出现其它如3.3则认为是错误。
 
-### 加密方式协商
+### 认证方式协商
 
 ```
-S(SConnection::RFBSTATE_SECURITY_TYPE) -> C(CConnection::RFBSTATE_SECURITY_TYPES) 服务端所有支持的加密方式
-C(CConnection::RFBSTATE_SECURITY_TYPES) -> S(SConnection::RFBSTATE_SECURITY_TYPE)  协商使用的加密方式
+S(SConnection::RFBSTATE_SECURITY_TYPE) -> C(CConnection::RFBSTATE_SECURITY_TYPES) 服务端所有支持的认证方式
+C(CConnection::RFBSTATE_SECURITY_TYPES) -> S(SConnection::RFBSTATE_SECURITY_TYPE)  协商使用的认证方式
 ```
 
-通过客户端日志Server offers security type可以看出服务端支持哪种加密。当前只使用一种加密方式secTypeVncAuth。日志Choosing security type可以看出最终使用哪个日志。
+通过客户端日志Server offers security type可以看出服务端支持哪种认证。当前只使用一种认证方式secTypeVncAuth。日志Choosing security type可以看出最终使用哪个日志。
 
-通过服务端日志Client requests security type可以看出客户端协商使用的加密方式。
+通过服务端日志Client requests security type可以看出客户端协商使用的认证方式。
 
-### 加密初始化
+### 认证初始化
 
 ```
-SConnection::processSecurityTypeMsg 在选定加密方式后始终返回true
+SConnection::processSecurityTypeMsg 在选定认证方式后始终返回true
  -> SConnection::processMsg 返回true
  -> VNCSConnectionST::processMessages 因为SConnection::processMsg所以不退出loop,继续调用processMsg
   -> SConnection::processMsg
@@ -77,7 +77,7 @@ CConnection::RFBSTATE_SECURITY_REASON
 
 ### 应用层初始化
 
-客户端在在加密初始化完成后会立即发送一个字节的share配置推动应用层初始化。
+客户端在在认证初始化完成后会立即发送一个字节的share配置推动应用层初始化。
 
 ```
 CConnection::processMsg
@@ -114,12 +114,65 @@ CConnection::processMsg
 
 
 
-# 服务端消息处理
+# 程序参数配置
 
 ```
-VNCServerST::processSocketReadEvent
- -> VNCSConnectionST::processMessages
- -> SConnection::processMsg
- -> SConnection::processVersionMsg
+class VncAuthPasswdParameter : public VncAuthPasswdGetter, BinaryParameter
+class BinaryParameter : public VoidParameter
 ```
 
+```
+VoidParameter::VoidParameter(const char* name_, const char* desc_,
+			     ConfigurationObject co)
+  : immutable(false), name(name_), description(desc_)
+{
+  Configuration *conf = NULL;
+
+  switch (co) {
+  case ConfGlobal: conf = Configuration::global();
+    break;
+  case ConfServer: conf = Configuration::server();
+    break;
+  case ConfViewer: conf = Configuration::viewer();
+    break;
+  }
+
+  _next = conf->head;
+  conf->head = this;
+
+  mutex = new os::Mutex();
+}
+```
+
+VoidParameter把自己this放入对应的Configuration中。Configuration是一个静态对象。程序的任何地址都可以通过Configuration对象更新参数。
+
+# 程序认证方式配置
+
+以服务端为例
+
+```
+SConnection::processVersionMsg
+ -> Security::GetEnabledSecTypes
+```
+
+把服务端所有支持的认证方式获取并传递给客户端。
+
+```
+SConnection成员SecurityServer security;
+SecurityServer静态成员static StringParameter secTypes; 
+SecurityServer(void) : Security(secTypes)
+
+Security::Security(StringParameter &secTypes)
+{
+  char *secTypesStr;
+
+  secTypesStr = secTypes.getData();
+  enabledSecTypes = parseSecTypes(secTypesStr);
+
+  delete [] secTypesStr;
+}
+```
+
+secTypes可以通过Configuration配置。
+
+这样就把Configuration中的配置转换到的enabledSecTypes。
