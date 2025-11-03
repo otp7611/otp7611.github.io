@@ -91,6 +91,16 @@ massif-visualizer massif.out.xxxx
 valgrind --trace-children=yes --trace-children-skip=*/static/* --tool=massif <prog>
 ```
 
+## 结束进程生成记录文档
+
+```
+killall massif-amd64-linux
+kill -SIGINT 219513
+massif.out.219513
+```
+
+不要试用pkill了，kill不到进程。
+
 # web调试
 
 https://developer.chrome.com/docs/devtools/remote-debugging
