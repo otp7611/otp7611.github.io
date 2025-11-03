@@ -57,6 +57,16 @@ sed -i 's/security.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 内容就是shell脚本
 ```
 
+```
+* * * * * root top -b -n 1 >> /tmp/log.test.$(date +\%Y\%m\%d) 2>&1 
+```
+
+crontab 中 `%` 是特殊字符，需要用 `\` 转义（写成 `\%`），否则会被解析为换行符。
+
+若任务一天内执行多次（如每小时），但仍想每天合并到一个日志文件，上述命令同样适用（同一天的 date 输出相同，会追加到同一个文件）。
+
+注意添加到/etc/cron.d/文件权限644,和所有者。
+
 # 查看多文件里的日志信息
 
 ```
@@ -98,8 +108,8 @@ cat /sys/fs/cgroup/learnconfig/memory.max
 设置进程
 
  ```
- echo $$
- sudo sh -c 'echo 3924 >/sys/fs/cgroup/learnconfig/cgroup.procs'
+ SHELLPID=`echo $$`
+ sudo sh -c "echo $SHELLPID >/sys/fs/cgroup/learnconfig/cgroup.procs"
  cat /proc/self/cgroup
  ```
 
@@ -118,7 +128,8 @@ nohup bash -c 'python3 main.py -1 2>&1 | rotatelogs -l /data/node_python.%Y-%m-%
 # 文本处理
 
 ```
-grep -rlI 'AAAA' . | xargs sed -i 's/AAAA/BBBB/g'
+grep -rlIi 'AAAA' . | xargs sed -i 's/AAAA/BBBB/g'
+grep ts c.m3u8  | sed  's/^/file /g' > c.filelist
 ```
 
 
@@ -136,9 +147,133 @@ set ttymouse=
 
 ```
 
+vim按百分比跳转。按5，0，％，就会跳到50％的位置。
+
+# core
+
+参考https://www.baeldung.com/linux/apport-enable-disable
+
+linux程序崩溃就会被系统内核捕捉，并读取/proc/sys/kernel/core_pattern中配置，如果是配置
+
+```
+core
+```
+
+则会在进程工作目录下生成
+
+```
+core.<pid>
+```
+
+如果是
+
+```
+|/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -- %E
+```
+
+则系统会把core数据流发给/usr/share/apport/apport这个程序处理。
+
+这个过程可以通过/etc/init.d/apport来确认。
+
+/usr/share/apport/apport这个文件在ubuntu中的软件包: apport (2.20.11-0ubuntu82.10) https://packages.ubuntu.com/jammy/apport
+
+如果是使用了apport那么应用生成的core在
+
+/var/crash 如果是deb包中程序
+
+/var/lib/apport/coredump 如果不是.
+
+日志在
+
+```
+/var/log/apport.log
+```
+
+## 查看apport服务状态
+
+```
+sudo systemctl status apport.service
+```
+
+## 禁用apport
+
+/etc/default/apport
+
+```
+# set this to 0 to disable apport, or to 1 to enable it
+# you can temporarily override this with
+# sudo service apport start force_start=1
+enabled=0
+```
+
+# bash脚本
+
+## 脚本中的|| true
+
+In Bash, the *|| true* construct is used to ensure that a command does not cause the script to exit when it fails. This is particularly useful when the *set -e* option is enabled, which makes the script exit immediately if any command returns a non-zero exit status.
+
+```
+#!/bin/bash
+
+set -e # Exit on any command failure
+
+# This command fails, but the script continues because of '|| true'
+ls nonexistent_file || true
+
+echo "Script continues despite the previous command failing."
+```
 
 
 
+# 查看系统日志
+
+```
+查看最后的启动时间who -b
+查看最后的启动时间last reboot | head -1
+查看日志
+journalctl --since "2025-10-30 00:00:00"
 
 
+```
+
+确认出错设备
+
+```
+ lspci -nn | grep 00:02
+00:02.0 PCI bridge [0604]: Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D PCI Express Root Port 2 [8086:6f04] (rev 01)
+
+```
+
+
+
+```
+-- Boot b7b80de5a2fa4c26b772b793688591cf --
+表示系统启动开始。
+```
+
+pci故障
+
+```
+Oct 30 13:20:25 pc kernel: pcieport 0000:00:02.0: AER: device recovery failed
+Oct 30 13:20:25 pc kernel: pcieport 0000:00:02.0: AER: Multiple Uncorrected (Fatal) error message received from 0000:00:02.0
+Oct 30 13:20:25 pc kernel: pcieport 0000:00:02.0: PCIe Bus Error: severity=Uncorrected (Fatal), type=Transaction Layer, (Requester ID)
+Oct 30 13:20:25 pc kernel: pcieport 0000:00:02.0:   device [8086:6f04] error status/mask=00004020/00000000
+Oct 30 13:20:25 pc kernel: pcieport 0000:00:02.0:    [ 5] SDES                  
+Oct 30 13:20:25 pc kernel: pcieport 0000:00:02.0:    [14] CmpltTO                (First)
+Oct 30 13:20:25 pc kernel: nvidia 0000:03:00.0: AER: can't recover (no error_detected callback)
+Oct 30 13:20:25 pc kernel: snd_hda_intel 0000:03:00.1: AER: can't recover (no error_detected callback)
+
+```
+
+GPU故障
+
+```
+Oct 30 09:49:36 pc kernel: NVRM: GPU at PCI:0000:03:00: GPU-44ec53bd-277c-984f-fa9f-cded30fbfd5d
+Oct 30 09:49:36 pc kernel: NVRM: Xid (PCI:0000:03:00): 79, pid='<unknown>', name=<unknown>, GPU has fallen off the bus.
+Oct 30 09:49:36 pc kernel: NVRM: GPU 0000:03:00.0: GPU has fallen off the bus.
+Oct 30 09:49:36 pc kernel: NVRM: A GPU crash dump has been created. If possible, please run
+                           NVRM: nvidia-bug-report.sh as root to collect this data before
+                           NVRM: the NVIDIA kernel module is unloaded.
+
+```
 

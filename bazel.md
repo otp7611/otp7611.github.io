@@ -204,3 +204,74 @@ bazel使用的工作目录可以通过--output_user_root来指定。如果项目
 ```
 
 。
+
+# 在--compilation_mode=fastbuild时会对生成的制品移除调试信息的分析
+
+在bazel源码中./src/main/java/com/google/devtools/build/lib/rules/cpp/CppConfiguration.java:299
+
+```
+    this.stripBinaries =
+        cppOptions.stripBinaries == StripMode.ALWAYS
+            || (cppOptions.stripBinaries == StripMode.SOMETIMES
+                && compilationMode == CompilationMode.FASTBUILD);
+    this.compilationMode = compilationMode;
+```
+
+378行
+
+```
+  @Override
+  public boolean shouldStripBinariesForStarlark(StarlarkThread thread) throws EvalException {
+    CcModule.checkPrivateStarlarkificationAllowlist(thread);
+    return stripBinaries;
+  }
+
+```
+
+./src/main/java/com/google/devtools/build/lib/starlarkbuildapi/cpp/CppConfigurationApi.java:168
+
+```
+  @StarlarkMethod(name = "should_strip_binaries", useStarlarkThread = true, documented = false)
+  boolean shouldStripBinariesForStarlark(StarlarkThread thread) throws EvalException;
+```
+
+./src/main/starlark/builtins_bzl/common/cc/link/link_build_variables.bzl:230
+
+```
+    if not must_keep_debug and cpp_config.should_strip_binaries():
+        vars[LINK_BUILD_VARIABLES.STRIP_DEBUG_SYMBOLS] = ""
+```
+
+63行
+
+```
+    # Presence of this variable indicates that the debug symbols should be stripped.
+    STRIP_DEBUG_SYMBOLS = "strip_debug_symbols",
+
+```
+
+这样就通过compilation_mode控制了strip_debug_symbols是否有定义.
+
+在rules_cc使用这个定义
+
+./external/rules_cc+/cc/private/toolchain/unix_cc_toolchain_config.bzl:1090
+
+```
+    strip_debug_symbols_feature = feature(
+        name = "strip_debug_symbols",
+        flag_sets = [
+            flag_set(
+                actions = all_link_actions + lto_index_actions,
+                flag_groups = [
+                    flag_group(
+                        flags = ["-Wl,-S"],
+                        expand_if_available = "strip_debug_symbols",
+                    ),
+                ],
+            ),
+        ],
+    )
+```
+
+ld参数-S会去掉制品中的调试信息.
+
