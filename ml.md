@@ -336,6 +336,72 @@ layers.MaxPooling2D(pool_size=2)
 
 表示从2x2的像素窗口中挑取最大值，pool_size=2会导致shape由(x,y)变成(x/2, y/2)
 
+## keras.layers.Embedding
+
+```
+keras.layers.Embedding(
+    input_dim,
+    output_dim,
+    embeddings_initializer="uniform",
+    embeddings_regularizer=None,
+    embeddings_constraint=None,
+    mask_zero=False,
+    weights=None,
+    lora_rank=None,
+    lora_alpha=None,
+    **kwargs
+)
+
+```
+
+Embedding可以把一个样本标量，样本的范围是[0, input_dim), 变成一个向量，向量的纬度是output_dim。
+
+举例：
+
+```
+[[4], [20]] -> [[0.25, 0.1], [0.6, -0.2]]
+```
+
+这里input_dim为21，output_dim为2
+
+有两个样本4，20. 经过Embeding把4编译成了[0.25, 0.1]，20编译成了[0.6, -0.2]。
+
+Embedding有点像从标量样本中提取出了N个特征。
+
+Embedding有个好处把与位置相关的信息转换成数据特征。
+
+Embdding的输入一样是样本位置索引。
+
+举个例子，九空格有
+
+```
+(1,10,100),(1,20,100),(1,30,100)
+(1,40,100),(1,50,100),(1,60,100)
+(1,70,100),(1,80,100),(1,90,100)
+```
+
+索引1的样本数据是(1,10,100)
+
+索引2的样本数据是(1,20,100)
+
+依此类推.
+
+索引数据1输入到Embdding输出为(0,10,0)
+
+索引数据2输入到Embdding输出为(0,20,0)
+
+依此类推。
+
+因为Embdding输出数据的shape与样本数据的shape是一样的。那么他们就可以加起来，就变成了
+
+(1,10,100)=(0,10,0)+(1,0,100)
+
+(1,20,100)=(0,20,0)+(1,0,100)
+
+那就能通过深度学习得到样本特征=位置特征+其它特征。
+
+综上，使用Embdding一个关键点就是要使输出的shape与样本的shape一致。
+
 
 
 ## tf.ones
