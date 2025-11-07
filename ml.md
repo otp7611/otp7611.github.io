@@ -402,6 +402,50 @@ Embdding的输入一样是样本位置索引。
 
 综上，使用Embdding一个关键点就是要使输出的shape与样本的shape一致。
 
+## layers.MultiHeadAttention
+
+```
+outputs = sum(values * pairwise_scores(query, keys))
+
+key: Optional key tensor of shape (B, S, dim). If not given, will use value for both key and value, which is the most common case.
+```
+
+dimensions意思是大小或个数,数量。
+
+```
+query
+[q1, q1]
+[q2, q2]
+
+keys
+[k1, k1]
+[k2, k2]
+[k3, k3]
+
+value
+[v1, v1, v1, v1]
+[v2, v2, v2, v2]
+[v3, v3, v3, v3]
+```
+
+```
+the query and key tensors are dot-producted and scaled. 
+softmax(scale([q1,q1]*[k1,k1],[q1,q1]*[k2,k2],[q1,q1]*[k3,k3]))
+得到的是[q1k1, q1k2, q2k3]
+最后：[v1, v1, v1, v1]*qk11 + [v2, v2, v2, v2]*qk12 + [v3, v3, v3, v3]*qk13
+对[q1,q1]对应的输出就是[v1*qk11 + v2*qk12 + v3*qk13, v1*qk11 + v2*qk12 + v3*qk13, v1*qk11 + v2*qk12 + v3*qk13, v1*qk11 + v2*qk12 + v3*qk13]
+```
+
+从计算上看，一个查询向量q会与关键字向量k行方向，与值向量v的行列方向都关联上了。
+
+num_attention_heads这么理解，一个attention就是一个(q, k, v), num_attention_heads就是控制有多少个attention。在返回结果时会把这些结果连接起来。
+
+```
+num_heads: Number of attention heads.
+```
+
+
+
 
 
 ## tf.ones
