@@ -277,3 +277,49 @@ Oct 30 09:49:36 pc kernel: NVRM: A GPU crash dump has been created. If possible,
 
 ```
 
+# 使用163邮箱为中继发邮件
+
+## 安装
+
+```
+sudo apt install mailutils
+sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.bak
+```
+
+## 修改postfix配置
+
+```
+relayhost = [smtp.163.com]:465
+smtp_sasl_auth_enable = yes
+smtp_sasl_security_options = noanonymous
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_use_tls = yes
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+smtp_tls_wrappermode = yes
+smtp_tls_security_level = encrypt
+
+```
+
+## 增加验证信息
+
+```
+sudo vim /etc/postfix/sasl_passwd
+[smtp.163.com]:465 otp7611@163.com:<后台拿到的验证码,不是登录邮箱用的>
+```
+
+```
+sudo postmap /etc/postfix/sasl_passwd
+生成/etc/postfix/sasl_passwd.db
+postman只能读取/etc/postfix/sasl_passwd.db
+```
+
+```
+sudo chmod 600 /etc/postfix/sasl_passwd*
+```
+
+## 测试发送邮件
+
+```
+sudo sh -c 'echo >/var/log/mail.log' && echo '111' | mail -a FROM:<源邮箱> -s '163relay-ssl-en-file' -A /etc/postfix/main.cf <目的邮箱>
+```
+
