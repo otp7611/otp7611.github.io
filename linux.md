@@ -323,3 +323,26 @@ sudo chmod 600 /etc/postfix/sasl_passwd*
 sudo sh -c 'echo >/var/log/mail.log' && echo '111' | mail -a FROM:<源邮箱> -s '163relay-ssl-en-file' -A /etc/postfix/main.cf <目的邮箱>
 ```
 
+## SMTPUTF8问题
+
+```
+ status=bounced (SMTPUTF8 is required, but was not offered by host smtp.163.com
+```
+
+添加参数
+
+```
+smtputf8_enable=no
+```
+
+然后在命令行中就可以使用中文主题了。
+
+## 使用mail命令时，自动添加发件邮箱
+
+```
+/etc/mail.rc
+set from=<发件邮箱>
+```
+
+
+
