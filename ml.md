@@ -49,13 +49,15 @@ variational autoencoders (VAEs)变分编码器 and generative adversarial networ
 
 # 基本网络
 
-DenseNet(A densely connected network )稠密连接网络
+## DenseNet(A densely connected network )稠密连接网络
 
-CONVNET(Convolution layer)
+## CONVNET(Convolution layer)
 
-RNN(Recurrent neural network)循环神经网络
+卷积关注于局部特征，大概在于一个核的范围，它无法去检测大范围的特征。
 
-TRANSFORMERS变换器网络
+## RNN(Recurrent neural network)循环神经网络
+
+## TRANSFORMERS变换器网络
 
 # 搭建环境
 
@@ -233,6 +235,8 @@ batch_size表示处理128个样本后，更新一次参数。更新参数和计�
 epochs表示对所有有的输入样本，每个样本都输入5次。所有样本处理一次表示一次迭代。
 
 ![](static/mini-batch.png)
+
+kera的layer在定义生成对象时（构造函数），shape是不包括batch索引的。在build和call时是有batch参数。build只执行一次，相对构造函数，在build中的input shape是带有batch参数。
 
 ## shape
 
@@ -530,7 +534,29 @@ y_true是下标，y_true中的1表示y_pred中在[0.05, 0.95, 0]，0.95应该是
 
 带sparse和不带的区域在于，不带sparse使用的one-hot编码，带的是使用整数下标。
 
+## keras.layers.DepthwiseConv2D
 
+```
+If data_format="channels_last": A 4D tensor with shape: (batch_size, height, width, channels)
+```
+
+举例
+
+```
+>>> x = np.random.rand(4, 10, 10, 12)
+>>> y = keras.layers.DepthwiseConv2D(kernel_size=3, activation='relu')(x)
+>>> print(y.shape)
+(4, 8, 8, 12)
+
+```
+
+4是batch_size, 10 是height, 10是width, 12是channels
+
+需要看对输入shape的定义。
+
+## ops.transpose
+
+transpose从tenso的shape来看，就是交换了shape中的两个元素。
 
 # python的with语句
 
