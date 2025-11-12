@@ -282,7 +282,7 @@ Oct 30 09:49:36 pc kernel: NVRM: A GPU crash dump has been created. If possible,
 ## 安装
 
 ```
-sudo apt install mailutils
+sudo apt install mailutils bsd-mailx
 sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.bak
 ```
 
