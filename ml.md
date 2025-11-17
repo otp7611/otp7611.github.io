@@ -308,6 +308,8 @@ tape.gradient(result, input_var)这里就是使用梯度了。
 
 ## 层layer
 
+model的layers中最后一层是没有激活函数的。
+
 layer输入张量，输出也是张量，layer是对张量的变换。layer的状态就是knowledge,这个系统学习到的知识。比如weight和b这些参数。
 
 每层的输入是一个张量数组，第一维信息始终是张量的个数。
