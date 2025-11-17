@@ -282,7 +282,7 @@ Oct 30 09:49:36 pc kernel: NVRM: A GPU crash dump has been created. If possible,
 ## 安装
 
 ```
-sudo apt install mailutils
+sudo apt install mailutils bsd-mailx
 sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.bak
 ```
 
@@ -339,9 +339,17 @@ smtputf8_enable=no
 
 ## 使用mail命令时，自动添加发件邮箱
 
+bsd-mailx中的mail命令会使用/etc/mail.rc配置.
+
 ```
 /etc/mail.rc
 set from=<发件邮箱>
+```
+
+mailutils中的mail只能通过命令参数传递
+
+```
+-a FROM:<源邮箱>
 ```
 
 
