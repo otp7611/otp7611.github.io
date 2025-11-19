@@ -61,6 +61,17 @@ location /127.0.0.1/ {
 
 https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass
 
+### 对比一下普通转发
+
+```
+    location / {
+        proxy_pass http://127.0.0.1:8002;
+        proxy_http_version 1.1;
+    }
+```
+
+
+
 ## 正则匹配路径
 
 ```
@@ -152,6 +163,23 @@ server {
     }
 }
 
+```
+
+# uwsgi配置
+
+```
+uwsgi -x <path/to/config.xml> --gevent 100 --gevent-early-monkey-patch --buffer-size=32768 --listen 1 --workers 1
+```
+
+上面命令是没有有--daemonize所以运行在前台，1个worker.
+
+nginx上配置
+
+```
+    location </path/to/location> {
+        uwsgi_pass 127.0.0.1:9001;
+        include uwsgi_params;
+    }
 ```
 
 
