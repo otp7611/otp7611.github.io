@@ -160,6 +160,8 @@ server {
         default_type text/html;
         alias </path/to/static/file>;
         add_header Access-Control-Allow-Origin *;
+        add_header Cross-Origin-Opener-Policy same-origin;
+        add_header Cross-Origin-Embedder-Policy require-corp;
     }
     location </websocket/prefix> {
         proxy_pass https://<backend.domain.com>;
