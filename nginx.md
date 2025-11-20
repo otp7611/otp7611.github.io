@@ -155,6 +155,12 @@ server {
         add_header Cross-Origin-Opener-Policy same-origin;
         add_header Cross-Origin-Embedder-Policy require-corp;
     }
+    location ~ </static/prefix/html/(.*)> {
+        types {}
+        default_type text/html;
+        alias </path/to/static/file>;
+        add_header Access-Control-Allow-Origin *;
+    }
     location </websocket/prefix> {
         proxy_pass https://<backend.domain.com>;
         proxy_http_version 1.1;
