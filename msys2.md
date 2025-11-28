@@ -17,3 +17,18 @@ MSYS2_ARG_CONV_EXCL="*"
 MSYS2_ARG_CONV_EXCL="/LIBPATH;/home" "e:\program\clang+llvm-18.1.8-x86_64-pc-windows-msvc\bin\clang-cl.exe" -Wl,/LIBPATH:/e
 ```
 
+## 举例：
+
+在cmd中输入
+
+```
+Bat_To_Exe_Converter_4.2.exe /bat m.bat /exe m.exe /icon a/b/app.ico /invisible /x32
+```
+
+在msys就应该是
+
+```
+Bat_To_Exe_Converter_4.2.exe //bat m.bat //exe m.exe //icon a/b/app.ico //invisible //x32
+```
+
+msys bash会对所有以/开始的参数进行转换，对//就会变成/不作转换。
