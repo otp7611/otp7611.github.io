@@ -40,3 +40,39 @@ jq . <<<$(cat conf/mediamux.conf) > conf/mediamux.conf
 echo '["ls","/etc"]' | jq -c .[] | xargs
 ```
 
+# 选择符合条件的对象
+
+样本ok.json 
+
+```
+{
+  "a": [
+    {
+      "b": 1,
+      "c": null
+    },
+    {
+      "b": 2,
+      "c": [
+        {
+          "e": ""
+        },
+        {
+          "e": "hello"
+        }
+      ]
+    }
+  ]
+}
+```
+
+```
+输入 jq '.a[] | .c // empty | .[] | select(.e | length > 0)' ok.json 
+返回
+{
+  "e": "hello"
+}
+
+```
+
+select的参数是返回为bool值的filter表达式。

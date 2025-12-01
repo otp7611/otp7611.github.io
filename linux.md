@@ -36,6 +36,7 @@ sudo du -d 1 -h / --exclude=/run --exclude=/dev/shm --exclude=/media/workspace -
 # 配置apt源
 
 ```shell
+unset https_proxy HTTPS_PROXY HTTP_PROXY http_proxy
 sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 sed -i 's/security.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 ```
@@ -275,5 +276,128 @@ Oct 30 09:49:36 pc kernel: NVRM: A GPU crash dump has been created. If possible,
                            NVRM: nvidia-bug-report.sh as root to collect this data before
                            NVRM: the NVIDIA kernel module is unloaded.
 
+```
+
+# 使用163邮箱为中继发邮件
+
+## 安装
+
+```
+sudo apt install mailutils bsd-mailx
+sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.bak
+```
+
+准备好配置后要运行service postfix start来开启postfix
+
+## 修改postfix配置
+
+把旧配置smtp_tls_security_level, relayhost注释掉，然后添加：
+
+```
+relayhost = [smtp.163.com]:465
+smtp_sasl_auth_enable = yes
+smtp_sasl_security_options = noanonymous
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_use_tls = yes
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+smtp_tls_wrappermode = yes
+smtp_tls_security_level = encrypt
+smtputf8_enable=no
+```
+
+## 增加验证信息
+
+```
+sudo vim /etc/postfix/sasl_passwd
+[smtp.163.com]:465 otp7611@163.com:<后台拿到的验证码,不是登录邮箱用的>
+```
+
+```
+sudo postmap /etc/postfix/sasl_passwd
+生成/etc/postfix/sasl_passwd.db
+postman只能读取/etc/postfix/sasl_passwd.db
+```
+
+```
+sudo chmod 600 /etc/postfix/sasl_passwd*
+```
+
+## 使用mail命令时，自动添加发件邮箱
+
+bsd-mailx中的mail命令会使用/etc/mail.rc配置.
+
+```
+/etc/mail.rc
+set from=<发件邮箱>
+```
+
+mailutils中的mail只能通过命令参数传递
+
+```
+-a FROM:<源邮箱>
+```
+
+## 测试发送邮件
+
+```
+sudo sh -c 'echo >/var/log/mail.log' && echo '111' | mail -a FROM:<源邮箱> -s '163relay-ssl-en-file' -A /etc/postfix/main.cf <目的邮箱>
+```
+
+## SMTPUTF8问题
+
+```
+ status=bounced (SMTPUTF8 is required, but was not offered by host smtp.163.com
+```
+
+添加参数
+
+```
+smtputf8_enable=no
+```
+
+然后在命令行中就可以使用中文主题了。
+
+# 容器支持中文输入
+
+```
+sudo docker run -dit --name testemail ubuntu:22.04
+sudo docker exec -it testemail /bin/bash
+```
+
+```
+输入locale
+如果看到POSIX就说明没有配置为支持中文输入模式
+输入locale -a
+应该要看到en_US.utf8和zh_CN.utf8
+```
+
+## 安装中文环境
+
+```
+apt install language-pack-zh-hans fonts-wqy-microhei fonts-noto-cjk locales
+locale-gen en_US.UTF-8 zh_CN.utf8
+fc-cache -fv
+```
+
+如果没有中文字体，会显示为方块。
+
+## 配置环境变量
+
+```
+update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+echo 'export LC_ALL=en_US.UTF-8' >> ~/.bashrc
+echo 'export LANG=en_US.UTF-8' >> ~/.bashrc
+echo 'export LANGUAGE=en_US.UTF-8' >> ~/.bashrc
+```
+
+如果没有在bashrc中配置LC_ALL,你是看不到中文，甚至连方块都没有。
+
+## 验证
+
+```
+locale
+locale -a
+curl -k  https://www.baidu.com
+最后输入中文试一下。
 ```
 

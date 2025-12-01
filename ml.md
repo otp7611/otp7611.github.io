@@ -49,13 +49,15 @@ variational autoencoders (VAEs)变分编码器 and generative adversarial networ
 
 # 基本网络
 
-DenseNet(A densely connected network )稠密连接网络
+## DenseNet(A densely connected network )稠密连接网络
 
-CONVNET(Convolution layer)
+## CONVNET(Convolution layer)
 
-RNN(Recurrent neural network)循环神经网络
+卷积关注于局部特征，大概在于一个核的范围，它无法去检测大范围的特征。
 
-TRANSFORMERS变换器网络
+## RNN(Recurrent neural network)循环神经网络
+
+## TRANSFORMERS变换器网络
 
 # 搭建环境
 
@@ -234,6 +236,8 @@ epochs表示对所有有的输入样本，每个样本都输入5次。所有样�
 
 ![](static/mini-batch.png)
 
+kera的layer在定义生成对象时（构造函数），shape是不包括batch索引的。在build和call时是有batch参数。build只执行一次，相对构造函数，在build中的input shape是带有batch参数。
+
 ## shape
 
 shape=()表示标量
@@ -304,6 +308,8 @@ tape.gradient(result, input_var)这里就是使用梯度了。
 
 ## 层layer
 
+model的layers中最后一层是没有激活函数的。
+
 layer输入张量，输出也是张量，layer是对张量的变换。layer的状态就是knowledge,这个系统学习到的知识。比如weight和b这些参数。
 
 每层的输入是一个张量数组，第一维信息始终是张量的个数。
@@ -335,6 +341,116 @@ layers.MaxPooling2D(pool_size=2)
 ```
 
 表示从2x2的像素窗口中挑取最大值，pool_size=2会导致shape由(x,y)变成(x/2, y/2)
+
+## keras.layers.Embedding
+
+```
+keras.layers.Embedding(
+    input_dim,
+    output_dim,
+    embeddings_initializer="uniform",
+    embeddings_regularizer=None,
+    embeddings_constraint=None,
+    mask_zero=False,
+    weights=None,
+    lora_rank=None,
+    lora_alpha=None,
+    **kwargs
+)
+
+```
+
+Embedding可以把一个样本标量，样本的范围是[0, input_dim), 变成一个向量，向量的纬度是output_dim。
+
+举例：
+
+```
+[[4], [20]] -> [[0.25, 0.1], [0.6, -0.2]]
+```
+
+这里input_dim为21，output_dim为2
+
+有两个样本4，20. 经过Embeding把4编译成了[0.25, 0.1]，20编译成了[0.6, -0.2]。
+
+Embedding有点像从标量样本中提取出了N个特征。
+
+Embedding有个好处把与位置相关的信息转换成数据特征。
+
+Embdding的输入一样是样本位置索引。
+
+举个例子，九空格有
+
+```
+(1,10,100),(1,20,100),(1,30,100)
+(1,40,100),(1,50,100),(1,60,100)
+(1,70,100),(1,80,100),(1,90,100)
+```
+
+索引1的样本数据是(1,10,100)
+
+索引2的样本数据是(1,20,100)
+
+依此类推.
+
+索引数据1输入到Embdding输出为(0,10,0)
+
+索引数据2输入到Embdding输出为(0,20,0)
+
+依此类推。
+
+因为Embdding输出数据的shape与样本数据的shape是一样的。那么他们就可以加起来，就变成了
+
+(1,10,100)=(0,10,0)+(1,0,100)
+
+(1,20,100)=(0,20,0)+(1,0,100)
+
+那就能通过深度学习得到样本特征=位置特征+其它特征。
+
+综上，使用Embdding一个关键点就是要使输出的shape与样本的shape一致。
+
+## layers.MultiHeadAttention
+
+```
+outputs = sum(values * pairwise_scores(query, keys))
+
+key: Optional key tensor of shape (B, S, dim). If not given, will use value for both key and value, which is the most common case.
+```
+
+dimensions意思是大小或个数,数量。
+
+```
+query
+[q1, q1]
+[q2, q2]
+
+keys
+[k1, k1]
+[k2, k2]
+[k3, k3]
+
+value
+[v1, v1, v1, v1]
+[v2, v2, v2, v2]
+[v3, v3, v3, v3]
+```
+
+```
+the query and key tensors are dot-producted and scaled. 
+softmax(scale([q1,q1]*[k1,k1],[q1,q1]*[k2,k2],[q1,q1]*[k3,k3]))
+得到的是[q1k1, q1k2, q2k3]
+最后：[v1, v1, v1, v1]*qk11 + [v2, v2, v2, v2]*qk12 + [v3, v3, v3, v3]*qk13
+对[q1,q1]对应的输出就是[v1*qk11 + v2*qk12 + v3*qk13, v1*qk11 + v2*qk12 + v3*qk13, v1*qk11 + v2*qk12 + v3*qk13, v1*qk11 + v2*qk12 + v3*qk13]
+```
+
+从计算上看，一个查询向量q会与关键字向量k行方向，与值向量v的行列方向都关联上了。
+
+num_attention_heads这么理解，一个attention就是一个(q, k, v), num_attention_heads就是控制有多少个attention。在返回结果时会把这些结果连接起来。
+
+```
+num_heads: Number of attention heads.
+```
+
+
 
 
 
@@ -420,7 +536,29 @@ y_true是下标，y_true中的1表示y_pred中在[0.05, 0.95, 0]，0.95应该是
 
 带sparse和不带的区域在于，不带sparse使用的one-hot编码，带的是使用整数下标。
 
+## keras.layers.DepthwiseConv2D
 
+```
+If data_format="channels_last": A 4D tensor with shape: (batch_size, height, width, channels)
+```
+
+举例
+
+```
+>>> x = np.random.rand(4, 10, 10, 12)
+>>> y = keras.layers.DepthwiseConv2D(kernel_size=3, activation='relu')(x)
+>>> print(y.shape)
+(4, 8, 8, 12)
+
+```
+
+4是batch_size, 10 是height, 10是width, 12是channels
+
+需要看对输入shape的定义。
+
+## ops.transpose
+
+transpose从tenso的shape来看，就是交换了shape中的两个元素。
 
 # python的with语句
 

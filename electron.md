@@ -66,5 +66,9 @@ C:\Users\<username>\AppData\Roaming\vncdaemon\Crashpad
  gdb --args ./node_modules/electron/dist/electron .
 ```
 
+```
+"C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\cdb.exe" -lines -y build/Release/ ./node_modules/electron/dist/electron.exe .
+```
+
 
 

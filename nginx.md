@@ -61,6 +61,17 @@ location /127.0.0.1/ {
 
 https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass
 
+### 对比一下普通转发
+
+```
+    location / {
+        proxy_pass http://127.0.0.1:8002;
+        proxy_http_version 1.1;
+    }
+```
+
+
+
 ## 正则匹配路径
 
 ```
@@ -121,6 +132,61 @@ drwxrwxrwx chenc chenc testm3u8
 ```nginx
     location ~ /prefixpath/(.*) {
     	alias /tmp/my/$1;
+    }
+```
+
+# https配置例子
+
+```
+server {
+    listen 443 ssl;      
+    server_name <you.domain.com>;
+    ssl_certificate /etc/nginx/conf.d/certs/server.crt; 
+    ssl_certificate_key /etc/nginx/conf.d/certs/server.key; 
+    ssl_session_timeout 5m;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2; 
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE; 
+    ssl_prefer_server_ciphers on;
+
+    location </static/prefix> {
+        root </path/to/static/prefix>;
+        gzip_static on;
+        add_header Access-Control-Allow-Origin *;
+        add_header Cross-Origin-Opener-Policy same-origin;
+        add_header Cross-Origin-Embedder-Policy require-corp;
+    }
+    location ~ </static/prefix/html/(.*)> {
+        types {}
+        default_type text/html;
+        alias </path/to/static/file>;
+        add_header Access-Control-Allow-Origin *;
+        add_header Cross-Origin-Opener-Policy same-origin;
+        add_header Cross-Origin-Embedder-Policy require-corp;
+    }
+    location </websocket/prefix> {
+        proxy_pass https://<backend.domain.com>;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+    }
+}
+
+```
+
+# uwsgi配置
+
+```
+uwsgi -x <path/to/config.xml> --gevent 100 --gevent-early-monkey-patch --buffer-size=32768 --listen 1 --workers 1
+```
+
+上面命令是没有有--daemonize所以运行在前台，1个worker.
+
+nginx上配置
+
+```
+    location </path/to/location> {
+        uwsgi_pass 127.0.0.1:9001;
+        include uwsgi_params;
     }
 ```
 
