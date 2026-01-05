@@ -197,7 +197,15 @@ ffprobe  -show_packets -select_streams v:0 -show_entries packet=codec_type,dts_t
 ffmpeg -c:v h264_cuvid -i ~/share/keep/audioVideo.offset.mp4 -vf "fps=25" -c:v h264_nvenc -g 50 -b:v 2500K -ac 2 -c:a aac -bsf:a aac_adtstoasc -hls_playlist_type vod -hls_flags discont_start -strict -2 -y a.mp4
 ```
 
+# hls标准加密
 
+```
+openssl rand 8 | xxd -p > encryption.key
+ffmpeg加参数：-hls_enc 1 -hls_enc_key $(cat encryption.key) -hls_enc_key_url https://127.0.0.1/testm3u8/encryption.key
+openssl解密：openssl enc -aes-128-cbc -nosalt -d -K $(cat encryption.key | tr -d '\n' | xxd -p) -iv 00000000000000000000000000000000  -in a0.ts -out dec.ts
+```
+
+参数文档encryption.key至少16字节，这前16字节用作key. 16字节进行hexdump是32字节。也就是说，给到ffmpeg的是16字节，给到openssl的是32字节。
 
 
 

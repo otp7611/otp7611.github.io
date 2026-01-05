@@ -176,3 +176,17 @@ Security::Security(StringParameter &secTypes)
 secTypes可以通过Configuration配置。
 
 这样就把Configuration中的配置转换到的enabledSecTypes。
+
+# 像素格式转换PixelFormat::bufferFromRGB
+
+如果源像素格式是RGB,目标像素是RGBA时,默认情况下,这个函数会把A通道设置为0. 在HTML中,如果A通道为0,则为透明的,所有如果希望显示出像素,就应该设置为0xff
+
+```
+        *r = *(src++);
+        *g = *(src++);
+        *b = *(src++);
+        *x = 0xff;
+```
+
+
+

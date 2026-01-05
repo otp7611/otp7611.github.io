@@ -401,3 +401,24 @@ curl -k  https://www.baidu.com
 最后输入中文试一下。
 ```
 
+# 使用虚拟摄像头
+
+```shell
+sudo apt install v4l2loopback-utils
+sudo modprobe v4l2loopback
+sudo modprobe -r v4l2loopback
+```
+
+```
+枚举设备
+v4l2-ctl --list-devices
+推流到虚拟设备
+ffmpeg -re -i a.mp4 -an -vf "scale=1280:720,format=yuv420p" -f v4l2 /dev/video0
+查看设备能力
+v4l2-ctl --list-formats-ext -d /dev/video0
+查看推流画面
+ffplay -f v4l2 /dev/video0
+```
+
+
+
